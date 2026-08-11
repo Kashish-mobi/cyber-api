@@ -6,6 +6,7 @@ import Paragraph from "../components/ui/Paragraph";
 import CartStrip from "../components/CartStrip";
 import SeoHeader from "../components/SeoHeader";
 
+
 const cartStrip = [
   {
     id: 1,
