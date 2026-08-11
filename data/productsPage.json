@@ -1,0 +1,63 @@
+{
+  "title": "Products",
+  "description": "Browse our full catalog of phones, laptops, and accessories.",
+    "items": [
+      {
+        "id": 1,
+        "title": "Apple iPhone 14 Pro 512GB",
+        "title2": "Gold (MQ233)",
+        "price": 1437,
+        "image": "/website/discount/d1.png"
+      },
+      {
+        "id": 2,
+        "title": "AirPods Max Silver",
+        "title2": "Starlight Aluminium",
+        "price": 549,
+         "image": "/website/discount/d1.png"
+      },
+      {
+        "id": 3,
+        "title": "Apple Watch Series 9 GPS",
+        "title2": "41mm Starlight Aluminium",
+        "price": 399,
+         "image": "/website/discount/d1.png"
+      },
+      {
+        "id": 4,
+        "title": "Apple iPhone 14 Pro 1TB Gold",
+        "title2": "(MQ2V3)",
+        "price": 1499,
+        "image": "/website/discount/d1.png"
+      },
+      {
+        "id": 5,
+        "title": "Apple iPhone 14 Pro 1TB Gold",
+        "title2": "(MQ2V3)",
+        "price": 1499,
+        "image": "/website/discount/d1.png"
+      },
+      {
+        "id": 6,
+        "title": "Apple iPhone 14 Pro 1TB Gold",
+        "title2": "(MQ2V3)",
+        "price": 1499,
+        "image": "/website/discount/d1.png"
+      },
+      {
+        "id": 7,
+        "title": "Apple iPhone 14 Pro 1TB Gold",
+        "title2": "(MQ2V3)",
+        "price": 1499,
+        "image": "/website/discount/d1.png"
+      },
+      {
+        "id": 8,
+        "title": "Apple iPhone 14 Pro 1TB Gold",
+        "title2": "(MQ2V3)",
+        "price": 1499,
+        "image": "/website/discount/d1.png"
+      }
+      
+    ]
+}

@@ -1,0 +1,15 @@
+import type { NextConfig } from "next";
+import path from "path";
+import { fileURLToPath } from "url";
+
+const projectRoot = path.dirname(fileURLToPath(import.meta.url));
+
+const nextConfig: NextConfig = {
+  // Prevent Turbopack from picking ~/package-lock.json as the workspace root,
+  // which watches the whole home directory and keeps the tab spinner running.
+  turbopack: {
+    root: projectRoot,
+  },
+};
+
+export default nextConfig;

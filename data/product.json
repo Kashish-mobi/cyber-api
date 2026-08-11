@@ -1,0 +1,162 @@
+{
+  "breadcrumbs": [
+    { "label": "Home", "href": "/" },
+    { "label": "Catalog", "href": "/catalog" },
+    { "label": "Smartphones", "href": "/catalog/smartphones" },
+    { "label": "Apple", "href": "/catalog/smartphones/apple" },
+    { "label": "iPhone 14 Pro Max", "href": "" }
+  ],
+  "ui": {
+    "selectColor": "Select color :",
+    "addToWishlist": "Add to Wishlist",
+    "addToCart": "Add to Cart",
+    "viewMore": "View More",
+    "fromReviews": "from {count} reviews",
+    "buyNow": "Buy Now"
+  },
+  "id": 1,
+  "name": "Apple iPhone 14 Pro Max",
+  "price": 1399,
+  "originalPrice": 1499,
+  "currency": "$",
+  "colors": [
+    { "name": "Black", "value": "#000000" },
+    { "name": "Purple", "value": "#7224C7" },
+    { "name": "Red", "value": "#EF0000" },
+    { "name": "Gold", "value": "#EAB400" },
+    { "name": "Silver", "value": "#E5E5E5" }
+  ],
+  "storage": ["128GB", "256GB", "512GB", "1TB"],
+  "selectedStorage": "1TB",
+  "selectedColor": "Black",
+  "specifications": [
+    { "name": "Screen Size", "value": "6.7\"", "icon": "ScreenSize" },
+    { "name": "CPU", "value": "Apple A16 Bionic", "icon": "CPU" },
+    { "name": "Number of Cores", "value": "6", "icon": "Cores" },
+    { "name": "Main Camera", "value": "48-12-12 MP", "icon": "MainCamera" },
+    { "name": "Front Camera", "value": "12 MP", "icon": "FrontCamera" },
+    { "name": "Battery Capacity", "value": "4323 mAh", "icon": "Battery" }
+  ],
+  "description": "Enhanced capabilities thanks to an enlarged display of 6.7 inches and work without recharging throughout the day. Incredible photos in weak, yes and in bright lighting using the new system with two cameras.",
+  "images": [
+    "/website/pdp/1.png",
+    "/website/pdp/2.png",
+    "/website/pdp/3.png",
+    "/website/pdp/4.png"
+  ],
+  "delivery": [
+    { "icon": "Delivery", "title": "Free Delivery", "time": "1-2 day" },
+    { "icon": "Stock", "title": "In Stock", "time": "Today" },
+    { "icon": "Guarentee", "title": "Guaranteed", "time": "1 year" }
+  ],
+  "inStock": true,
+  "wishlist": false,
+  "details": {
+    "title": "Details",
+    "description": "Just as a book is judged by its cover, the first thing you notice when you pick up a modern smartphone is the display. Nothing surprising, because advanced technologies allow you to practically level the display frames and cutouts for the front camera and speaker, leaving no room for bold design solutions. And how good that in such realities Apple everything is fine with displays. Both critics and mass consumers always praise the quality of the picture provided by the products of the Californian brand. And last year's 6.7-inch Retina panels, which had ProMotion, caused real admiration for many.",
+    "sections": [
+      {
+        "title": "Screen",
+        "specifications": [
+          { "name": "Screen diagonal", "value": "6.7\"" },
+          { "name": "The screen resolution", "value": "2796×1290" },
+          { "name": "The screen refresh rate", "value": "120 Hz" },
+          { "name": "The pixel density", "value": "460 ppi" },
+          { "name": "Screen type", "value": "OLED" },
+          {
+            "name": "Additionally",
+            "value": [
+              "Dynamic Island",
+              "Always-On display",
+              "HDR display",
+              "True Tone",
+              "Wide color (P3)"
+            ]
+          }
+        ]
+      },
+      {
+        "title": "CPU",
+        "specifications": [
+          { "name": "CPU", "value": "A16 Bionic" },
+          { "name": "Number of cores", "value": "6" }
+        ]
+      }
+    ]
+  },
+  "reviews": {
+    "title": "Reviews",
+    "rating": 4.8,
+    "totalReviews": 125,
+    "ratingBreakdown": [
+      { "label": "Excellent", "count": 100 },
+      { "label": "Good", "count": 11 },
+      { "label": "Average", "count": 3 },
+      { "label": "Below Average", "count": 8 },
+      { "label": "Poor", "count": 1 }
+    ],
+    "items": [
+      {
+        "id": 1,
+        "name": "Grace Carey",
+        "rating": 4,
+        "date": "24 January, 2023",
+        "avatar": "/website/reviews/1.png",
+        "comment": "I was a bit nervous to be buying a secondhand phone from Amazon, but I couldn’t be happier with my purchase!! I have a pre-paid data plan so I was worried that this phone wouldn’t connect with my data plan, since the new phones don’t have the physical SIM tray anymore, but couldn’t have been easier! I bought an Unlocked black iPhone 14 Pro Max in excellent condition and everything is perfect. It was super easy to set up and the phone works and looks great. It truly was in excellent condition. Highly recommend!!!🖤"
+      },
+      {
+        "id": 2,
+        "name": "Ronald Richards",
+        "rating": 5,
+        "date": "24 January, 2023",
+        "avatar": "/website/reviews/2.png",
+        "comment": "This phone has 1T storage and is durable. Plus all the new iPhones have a C port! Apple is phasing out the current ones! (All about the Benjamin’s) So if you want a phone that’s going to last grab an iPhone 14 pro max and get several cords and plugs."
+      },
+      {
+        "id": 3,
+        "name": "Darcy King",
+        "rating": 4,
+        "date": "24 January, 2023",
+        "avatar": "/website/reviews/3.png",
+        "comment": "I might be the only one to say this but the camera is a little funky. Hoping it will change with a software update: otherwise, love this phone! Came in great condition",
+        "images": [
+          "/website/reviews/r1.png",
+          "/website/reviews/r2.png"
+        ]
+      }
+    ]
+  },
+  "relatedProducts": {
+    "title": "Related Products",
+    "items": [
+      {
+        "id": "discounted-product-1",
+        "title": "Apple iPhone 14 Pro 512GB",
+        "title2": "Gold (MQ233)",
+        "price": 1437,
+        "image": "/website/discount/d1.png"
+      },
+      {
+        "id": "discounted-product-2",
+        "title": "AirPods Max Silver",
+        "title2": "Starlight Aluminium ",
+        "price": 549,
+        "image": "/website/discount/d2.png"
+      },
+      {
+        "id": "discounted-product-3",
+        "title": "Apple Watch Series 9 GPS",
+        "title2": "41mm Starlight Aluminium",
+        "price": 399,
+        "image": "/website/discount/d3.png"
+      },
+      {
+        "id": "discounted-product-4",
+        "title": "Apple iPhone 14 Pro 1TB Gold",
+        "title2": "(MQ2V3)",
+        "price": 1499,
+        "image": "/website/discount/d4.png"
+      }
+    ]
+  }
+}
