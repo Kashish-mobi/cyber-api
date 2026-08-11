@@ -1,4 +1,5 @@
 import { Inter } from "next/font/google";
+import ReduxProvider from "@/redux/provider";
 import "./globals.css";
 import TopLoader from "./components/TopLoader";
 import Header from "./components/Header";
@@ -17,10 +18,12 @@ export default function RootLayout({
   return (
     <html lang="en" className={inter.className}>
       <body className="antialiased">
-        <TopLoader />
-        <Header />
-        {children}
-        <Footer />
+        <ReduxProvider>
+          <TopLoader />
+          <Header />
+          {children}
+          <Footer />
+        </ReduxProvider>
       </body>
     </html>
   );

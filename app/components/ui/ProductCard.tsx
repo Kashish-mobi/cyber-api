@@ -6,7 +6,7 @@ import Button from "./Button";
 import Heading from "./Heading";
 import Paragraph from "./Paragraph";
 import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter } from "nextjs-toploader/app";
 
 /**
  * Single source of truth for product card UI (PDP + Discount).

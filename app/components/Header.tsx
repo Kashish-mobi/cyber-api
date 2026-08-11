@@ -7,10 +7,13 @@ import { CompanyLogo, Search, User } from "../icons";
 import { getIcon, type IconName } from "@/lib/icons";
 import Paragraph from "./ui/Paragraph";
 import SearchBox from "./ui/SearchBox";
+import { useSelector } from "react-redux";
+import { RootState } from "@/redux/store";
 
 const { header, ui } = homepage;
 
 function UserMenu() {
+  const isAuthenticated = useSelector((state: RootState) => state.user.isAuthenticated);
   const [open, setOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
 
@@ -56,7 +59,7 @@ function UserMenu() {
 
 export default function Header() {
   const [menuOpen, setMenuOpen] = useState(false);
-
+  const isAuthenticated = useSelector((state: RootState) => state.user.isAuthenticated);
   const actionIcon = (name: string) => {
     const Icon = getIcon(name as IconName);
     return Icon ? <Icon /> : null;
@@ -92,7 +95,7 @@ export default function Header() {
                 {actionIcon(link.icon)}
               </Link>
             ))}
-          <UserMenu />
+          {isAuthenticated ? <UserMenu /> : "hello"}
         </div>
       </div>
 
@@ -121,7 +124,7 @@ export default function Header() {
           ))}
         </nav>
 
-        <UserMenu />
+        {isAuthenticated ? <UserMenu /> : "hello"}
       </div>
 
       {/* Mobile */}

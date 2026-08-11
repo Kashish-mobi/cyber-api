@@ -98,7 +98,7 @@ export default function CategorySection() {
             return (
               <Link
                 key={category.name}
-                href={`/category/${category.slug}`}
+                href={`/category/?title=${category.name}&slug=${category.slug}`}
                 className="flex h-[128px] md:h-[112px] w-full flex-col items-center justify-center gap-[8px] rounded-[15px] bg-surface-gray px-[8px] py-[24px] md:py-[16px] shadow-[0px_4px_10px_0px_rgba(0,0,0,0.1)] md:h-[128px]"
               >
                 {Icon ? <Icon /> : null}

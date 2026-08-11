@@ -158,7 +158,7 @@ function DesktopFeatureGrid() {
             </Heading>
             <Paragraph className="text-muted">{macbook.description}</Paragraph>
             <Button
-              variant={macbook.cta.variant as ButtonVariant}
+              variant="dark"
               text={macbook.cta.text}
               className="mt-[16px]"
               onClick={() => router.push(macbook.cta.href)}
