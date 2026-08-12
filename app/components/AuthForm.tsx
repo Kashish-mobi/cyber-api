@@ -7,7 +7,7 @@ import Heading from "./ui/Heading";
 import Paragraph from "./ui/Paragraph";
 import AppImage from "./ui/Image";
 import { useAppDispatch } from "@/redux/hooks";
-import { login, signUp } from "@/redux/slices/userSlice";
+import { login, ONE_HOUR_MS, saveLogin, signUp } from "@/redux/slices/userSlice";
 import { useRouter } from "nextjs-toploader/app";
 
 type AuthFormProps = {
@@ -32,8 +32,18 @@ export default function AuthForm({ mode }: AuthFormProps) {
           login({ username, password })
         ).unwrap();
   
-        document.cookie = `accessToken=${response.accessToken}; path=/`;
-  
+        saveLogin({
+          user: {
+            id: response.id,
+            name: `${response.firstName} ${response.lastName}`.trim(),
+            email: response.email,
+            username: response.username,
+          },
+          accessToken: response.accessToken,
+          refreshToken: response.refreshToken,
+          expiresAt: Date.now() + ONE_HOUR_MS,
+        });
+
         router.push("/");
       } else {
         await dispatch(

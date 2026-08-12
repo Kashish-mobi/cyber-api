@@ -7,13 +7,15 @@ import { CompanyLogo, Search, User } from "../icons";
 import { getIcon, type IconName } from "@/lib/icons";
 import Paragraph from "./ui/Paragraph";
 import SearchBox from "./ui/SearchBox";
+import { useAppDispatch } from "@/redux/hooks";
 import { useSelector } from "react-redux";
 import { RootState } from "@/redux/store";
+import { clearLogin, logout } from "@/redux/slices/userSlice";
 
 const { header, ui } = homepage;
 
 function UserMenu() {
-  const isAuthenticated = useSelector((state: RootState) => state.user.isAuthenticated);
+  const dispatch = useAppDispatch();
   const [open, setOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
 
@@ -26,6 +28,12 @@ function UserMenu() {
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
+
+  function handleLogout() {
+    clearLogin();
+    dispatch(logout());
+    setOpen(false);
+  }
 
   return (
     <div className="relative" ref={menuRef}>
@@ -41,16 +49,13 @@ function UserMenu() {
 
       {open ? (
         <div className="absolute top-[45px] right-0 z-50 w-[180px] rounded-[8px] border border-border-light bg-secondary p-[8px] shadow-lg">
-          {header.authLinks.map((link) => (
-            <Link
-              key={link.href}
-              href={link.href}
-              className="block rounded-[6px] px-4 py-3 text-[14px] font-[500] hover:bg-surface"
-              onClick={() => setOpen(false)}
-            >
-              {link.label}
-            </Link>
-          ))}
+          <button
+            type="button"
+            onClick={handleLogout}
+            className="block w-full rounded-[6px] px-4 py-3 text-left text-[14px] font-[500] hover:bg-surface"
+          >
+            Log out
+          </button>
         </div>
       ) : null}
     </div>
@@ -59,7 +64,11 @@ function UserMenu() {
 
 export default function Header() {
   const [menuOpen, setMenuOpen] = useState(false);
-  const isAuthenticated = useSelector((state: RootState) => state.user.isAuthenticated);
+  const isAuthenticated = useSelector(
+    (state: RootState) => state.user.isAuthenticated
+  );
+
+  const userActionLink = header.actionLinks.find((link) => link.icon === "user");
   const actionIcon = (name: string) => {
     const Icon = getIcon(name as IconName);
     return Icon ? <Icon /> : null;
@@ -95,7 +104,13 @@ export default function Header() {
                 {actionIcon(link.icon)}
               </Link>
             ))}
-          {isAuthenticated ? <UserMenu /> : "hello"}
+          {isAuthenticated ? (
+            <UserMenu />
+          ) : userActionLink ? (
+            <Link href="/login" aria-label={userActionLink.label}>
+              <User />
+            </Link>
+          ) : null}
         </div>
       </div>
 
@@ -124,7 +139,13 @@ export default function Header() {
           ))}
         </nav>
 
-        {isAuthenticated ? <UserMenu /> : "hello"}
+        {isAuthenticated ? (
+          <UserMenu />
+        ) : userActionLink ? (
+          <Link href="/login" aria-label={userActionLink.label}>
+            <User />
+          </Link>
+        ) : null}
       </div>
 
       {/* Mobile */}
