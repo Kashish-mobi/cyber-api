@@ -82,10 +82,14 @@ export default function ProductDetails({
       </div>
 
       <div className="flex justify-center pt-[8px]">
-        <Button variant="dark" className="!min-w-[216px] !h-[48px]">
-          {viewMoreLabel} <UpArrow />
-        </Button>
-      </div>
+  <Button
+    variant="dark"
+    className="group gap-[8px] !min-w-[216px] !h-[48px]"
+  >
+    {viewMoreLabel}
+    <UpArrow className="transition-colors duration-300" />
+  </Button>
+</div>
     </section>
   );
 }

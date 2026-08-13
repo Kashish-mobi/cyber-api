@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import homepage from "@/data/homepage.json";
-import { CompanyLogo, Search, User } from "../icons";
+import { CompanyLogo, User } from "../icons";
 import { getIcon, type IconName } from "@/lib/icons";
 import Paragraph from "./ui/Paragraph";
 import SearchBox from "./ui/SearchBox";
@@ -83,7 +83,12 @@ export default function Header() {
         </Link>
 
         <div className="flex items-center">
-          <SearchBox placeholder={header.searchPlaceholder} className="w-full" inputClassName="w-full bg-transparent tracking-[-0.44px] outline-none" />
+          <SearchBox
+            placeholder={header.searchPlaceholder}
+            className="w-full"
+            inputClassName="w-full bg-transparent tracking-[-0.44px] outline-none"
+            enableProductSearch
+          />
         </div>
 
         <nav className="flex items-center gap-[20px] 2xl:gap-[52px]">
@@ -121,14 +126,12 @@ export default function Header() {
         </Link>
 
         <div className="flex-1">
-          <div className="flex h-[56px] items-center gap-2 rounded-[8px] bg-surface px-[16px]">
-            <Search />
-            <input
-              type="text"
-              placeholder={header.searchPlaceholder}
-              className="w-full bg-transparent tracking-[-0.44px] outline-none"
-            />
-          </div>
+          <SearchBox
+            placeholder={header.searchPlaceholder}
+            className="w-full !h-[56px]"
+            inputClassName="w-full bg-transparent tracking-[-0.44px] outline-none"
+            enableProductSearch
+          />
         </div>
 
         <nav className="flex items-center gap-[20px] whitespace-nowrap text-[15px] font-[500]">
@@ -215,14 +218,13 @@ export default function Header() {
         </div>
 
         <div className="p-[20px]">
-          <div className="flex h-[52px] items-center gap-2 rounded-[8px] bg-surface px-[16px]">
-            <Search />
-            <input
-              type="text"
-              placeholder={header.searchPlaceholder}
-              className="w-full bg-transparent text-[14px] outline-none"
-            />
-          </div>
+          <SearchBox
+            placeholder={header.searchPlaceholder}
+            className="w-full !h-[52px]"
+            inputClassName="w-full bg-transparent text-[14px] outline-none"
+            enableProductSearch
+            onSearch={() => setMenuOpen(false)}
+          />
         </div>
 
         <nav className="flex flex-col px-[20px]">

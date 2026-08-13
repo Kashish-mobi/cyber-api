@@ -1,4 +1,4 @@
-import Heading from "./ui/Heading";
+
 
 type SeoHeaderProps = {
   title: string;

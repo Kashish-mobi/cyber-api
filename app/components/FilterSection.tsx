@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useSearchParams } from "next/navigation";
 import {
   LeftArrow,
   DownArrow,
@@ -136,43 +137,51 @@ const filterSectionData = {
   filters: [
     {
       label: "Price",
-      options: [],
-    },
-    {
-      label: "Brand",
       options: [
-        "Apple",
-        "Samsung",
-        "Xiaomi",
-        "Poco",
-        "OPPO",
-        "Honor",
-        "Motorola",
-        "Nokia",
-        "Realme",
+        "Under $25",
+        "$25 - $50",
+        "$50 - $100",
+        "$100 - $500",
+        "Over $500",
       ],
     },
     {
-      label: "Battery capacity",
+      label: "Brand",
       options: [],
     },
     {
-      label: "Screen type",
+      label: "Category",
       options: [],
     },
     {
-      label: "Screen diagonal",
-      options: [],
+      label: "Rating",
+      options: [
+        "4★ & above",
+        "3★ & above",
+        "2★ & above",
+        "1★ & above",
+      ],
     },
     {
-      label: "Protection class",
-      options: [],
+      label: "Availability",
+      options: [
+        "In Stock",
+        "Low Stock",
+      ],
     },
     {
-      label: "Built-in memory",
+      label: "Discount",
+      options: [
+        "10% & above",
+        "20% & above",
+        "30% & above",
+      ],
+    },
+    {
+      label: "Tags",
       options: [],
     },
-  ],
+  ]
 };
 
 /* ---------------------------------- */
@@ -180,6 +189,8 @@ const filterSectionData = {
 /* ---------------------------------- */
 
 export function FilterSectionDesktop() {
+  const searchParams = useSearchParams();
+  const category = searchParams.get("category");
   const [openFilter, setOpenFilter] = useState<string | null>(
     null,
   );

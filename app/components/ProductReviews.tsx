@@ -116,7 +116,7 @@ export default function ProductReviews({
             <Paragraph type="form2" className="!text-muted-light !font-[400]">
             {fromLabel}
           </Paragraph>
-          </div>
+        </div>
           
           <div className="md:block hidden">
             <Stars rating={rating} size="md" />
@@ -143,7 +143,7 @@ export default function ProductReviews({
         </div>
       </div>
       <div className="relative w-full border-primary-border border-[1px] rounded-[12px] px-[16px]">
-        <Input placeholder="Leave comment" className="!h-[62px] border-primary-border" inlineButton={true} buttonText="Submit" />
+        <Input placeholder="Leave comment" className="!h-[62px] border-primary-border w-full focus:outline-none focus:ring-0" inlineButton={true} buttonText="Submit" />
       </div>
 
       
@@ -206,10 +206,14 @@ export default function ProductReviews({
   </div>
 
   <div className="flex justify-center pt-[24px]">
-  <Button variant="dark" className="!min-w-[216px] !h-[48px]">
-          {viewMoreLabel} <UpArrow />
-        </Button>
-  </div>
+  <Button
+    variant="dark"
+    className="group gap-[8px] !min-w-[216px] !h-[48px]"
+  >
+    {viewMoreLabel}
+    <UpArrow className="transition-colors duration-300" />
+  </Button>
+</div>
   </>
   );
 }

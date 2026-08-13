@@ -1,4 +1,10 @@
+import type { Metadata } from "next";
 import AuthForm from "@/app/components/AuthForm";
+
+export const metadata: Metadata = {
+  title: "Sign up — CyberStore",
+  description: "Create a CyberStore account and start shopping.",
+};
 
 export default function SignupPage() {
   return (

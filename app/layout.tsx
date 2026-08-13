@@ -4,6 +4,7 @@ import "./globals.css";
 import TopLoader from "./components/TopLoader";
 import Header from "./components/Header";
 import Footer from "./components/Footer";
+import GlobalLoader from "./components/Loader";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -20,6 +21,7 @@ export default function RootLayout({
       <body className="antialiased">
         <ReduxProvider>
           <TopLoader />
+          <GlobalLoader />
           <Header />
           {children}
           <Footer />

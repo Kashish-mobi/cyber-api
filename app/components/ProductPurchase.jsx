@@ -30,19 +30,34 @@ const iconMap = {
   Stock,
 };
 
-function ProductGallery({ images, name }) {
-  const [activeImage, setActiveImage] = useState(images[0]);
+function ProductGallery({ images, thumbnail, name }) {
+  const galleryImages =
+    images?.length > 0
+      ? images
+      : thumbnail
+        ? [thumbnail]
+        : [];
+
+  const [activeImage, setActiveImage] = useState(galleryImages[0] || "");
+
+  if (!galleryImages.length) {
+    return (
+      <div className="flex-1 w-full min-h-[329px] md:min-h-[516px] flex items-center justify-center">
+        <Paragraph type="body" className="text-muted">No image</Paragraph>
+      </div>
+    );
+  }
 
   return (
     <div className="flex flex-col-reverse xl:flex-row gap-[33px] items-center md:gap-[48px]">
       <div className="flex xl:flex-col gap-[33px] md:gap-[24px]">
-        {images.map((image) => (
+        {galleryImages.map((image) => (
           <button
             key={image}
             type="button"
             onClick={() => setActiveImage(image)}
             className={cn(
-              "relative lg:h-[93px] lg:w-[74px] h-[67px] w-[56px] rounded-[8px] overflow-hidden cursor-pointer",
+              "relative lg:h-[93px] lg:w-[74px] h-[67px] w-[56px] rounded-[8px] overflow-hidden cursor-pointer border-2 border-surface-card",
             )}
           >
             <AppImage
@@ -86,15 +101,15 @@ function InfoCard({ product }) {
         <div className="flex gap-[13px] items-center">
           <Paragraph type="productPrice">
             {product.currency}
-            {product.price}
+            {product.price.toFixed(2)}
           </Paragraph>
           <Paragraph type="productOriginalPrice">
             {product.currency}
-            {product.originalPrice}
+            {product.originalPrice.toFixed(2)}
           </Paragraph>
         </div>
 
-        <div className="flex gap-[24px] items-center">
+        {/* <div className="flex gap-[24px] items-center">
           <Paragraph type="productColor">{product.ui.selectColor}</Paragraph>
           <div className="flex gap-[8px]">
             {product.colors.map((color) => (
@@ -111,9 +126,9 @@ function InfoCard({ product }) {
               />
             ))}
           </div>
-        </div>
+        </div> */}
 
-        <div className="grid grid-cols-4 gap-[8px] md:gap-[16px] items-center w-full pt-[8px]">
+        {/* <div className="grid grid-cols-4 gap-[8px] md:gap-[16px] items-center w-full pt-[8px]">
           {product.storage.map((storage) => (
             <button
               key={storage}
@@ -129,7 +144,7 @@ function InfoCard({ product }) {
               {storage}
             </button>
           ))}
-        </div>
+        </div> */}
 
         <div className="grid grid-cols-2 md:grid-cols-3 gap-[8px] md:gap-[16px] items-center w-full pt-[8px]">
           {product.specifications.map((specification) => {
@@ -167,7 +182,11 @@ export default function ProductPurchase({ product }) {
   return (
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-[36px] md:gap-[48px] items-center">
       <div className="col-span-1">
-        <ProductGallery images={product.images} name={product.name} />
+        <ProductGallery
+          images={product.images}
+          thumbnail={product.thumbnail}
+          name={product.name}
+        />
       </div>
 
       <div className="col-span-1">
@@ -178,14 +197,14 @@ export default function ProductPurchase({ product }) {
     variant="dark"
     className="w-full sm:flex-1 !min-w-0 !h-[56px]"
   >
-    {product.ui.addToWishlist}
+    Add to Wishlist
   </Button>
 
   <Button
     variant="fill-dark"
     className="w-full sm:flex-1 !min-w-0 !h-[56px]"
   >
-    {product.ui.addToCart}
+    Add to Cart
   </Button>
 </div>
 

@@ -27,11 +27,14 @@ const cardStyles = {
 } as const;
 
 export type ProductCardProps = {
-  id: string;
+  id: string | number;
   title: string;
+  /** DummyJSON `brand` (preferred subtitle) */
+  brand?: string;
+  /** @deprecated use `brand` — kept for backward compatibility */
   title2?: string;
   price: number;
-  image: string;
+  thumbnail: string;
   buttonText: string;
   currencySymbol?: string;
   onWishlist?: (id: string) => void;
@@ -40,19 +43,25 @@ export type ProductCardProps = {
 export default function ProductCard({
   id,
   title,
+  brand = "",
   title2 = "",
   price,
-  image,
+  thumbnail,
   buttonText,
   currencySymbol = "$",
   onWishlist,
 }: ProductCardProps) {
   // One title block like PDP — keeps card height consistent
-  const displayTitle = title2 ?  <>
-  {title}
-  <br />
-  {title2}
-</> : title;
+  const subtitle = brand || title2;
+  const displayTitle = subtitle ? (
+    <>
+      {title}
+      <br />
+      {subtitle}
+    </>
+  ) : (
+    title
+  );
   const [isWishlist, setIsWishlist] = useState(false);
   const router = useRouter();
   const handleWishlist = () => {
@@ -73,8 +82,8 @@ export default function ProductCard({
 
       <div className={cardStyles.imageWrap}>
         <AppImage
-          src={image}
-          alt={title as string}
+          src={thumbnail}
+          alt={displayTitle as string}
           width={160}
           height={160}
           className={cardStyles.image}
@@ -95,7 +104,7 @@ export default function ProductCard({
       </div>
 
       <Button variant="solid" text={buttonText} className={cardStyles.button} onClick={() => {
-        router.push(`/products/${id}`);
+        router.push(`/products/${String(id)}`);
       }} />
     </div>
   );

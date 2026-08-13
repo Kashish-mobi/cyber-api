@@ -1,63 +1,430 @@
 {
   "title": "Products",
   "description": "Browse our full catalog of phones, laptops, and accessories.",
-    "items": [
-      {
-        "id": 1,
-        "title": "Apple iPhone 14 Pro 512GB",
-        "title2": "Gold (MQ233)",
-        "price": 1437,
-        "image": "/website/discount/d1.png"
+  "items": [
+    {
+      "id": 1,
+      "title": "Apple iPhone 14 Pro 512GB Gold (MQ233)",
+      "description": "Apple iPhone 14 Pro 512GB Gold (MQ233). A reliable product with quality build and everyday performance.",
+      "category": "smartphones",
+      "price": 1437,
+      "discountPercentage": 10,
+      "rating": 4.5,
+      "stock": 50,
+      "tags": [
+        "smartphones",
+        "apple"
+      ],
+      "brand": "Apple",
+      "sku": "SKU-1",
+      "weight": 1,
+      "dimensions": {
+        "width": 10,
+        "height": 15,
+        "depth": 5
       },
-      {
-        "id": 2,
-        "title": "AirPods Max Silver",
-        "title2": "Starlight Aluminium",
-        "price": 549,
-         "image": "/website/discount/d1.png"
+      "warrantyInformation": "1 year warranty",
+      "shippingInformation": "Ships in 1-2 business days",
+      "availabilityStatus": "In Stock",
+      "reviews": [
+        {
+          "rating": 5,
+          "comment": "Highly recommended!",
+          "date": "2025-04-30T09:41:02.054Z",
+          "reviewerName": "Jace Smith",
+          "reviewerEmail": "jace.smith@x.dummyjson.com"
+        },
+        {
+          "rating": 4,
+          "comment": "Very satisfied!",
+          "date": "2025-04-30T09:41:02.054Z",
+          "reviewerName": "Harper Kelly",
+          "reviewerEmail": "harper.kelly@x.dummyjson.com"
+        }
+      ],
+      "returnPolicy": "30 days return policy",
+      "minimumOrderQuantity": 1,
+      "meta": {
+        "createdAt": "2025-04-30T09:41:02.054Z",
+        "updatedAt": "2025-04-30T09:41:02.054Z",
+        "barcode": "1000000000001",
+        "qrCode": "https://cdn.dummyjson.com/public/qr-code.png"
       },
-      {
-        "id": 3,
-        "title": "Apple Watch Series 9 GPS",
-        "title2": "41mm Starlight Aluminium",
-        "price": 399,
-         "image": "/website/discount/d1.png"
+      "images": [
+        "/website/discount/d1.png"
+      ],
+      "thumbnail": "/website/discount/d1.png"
+    },
+    {
+      "id": 2,
+      "title": "AirPods Max Silver Starlight Aluminium",
+      "description": "AirPods Max Silver Starlight Aluminium. A reliable product with quality build and everyday performance.",
+      "category": "mobile-accessories",
+      "price": 549,
+      "discountPercentage": 10,
+      "rating": 4.5,
+      "stock": 50,
+      "tags": [
+        "mobile-accessories",
+        "apple"
+      ],
+      "brand": "Apple",
+      "sku": "SKU-2",
+      "weight": 1,
+      "dimensions": {
+        "width": 10,
+        "height": 15,
+        "depth": 5
       },
-      {
-        "id": 4,
-        "title": "Apple iPhone 14 Pro 1TB Gold",
-        "title2": "(MQ2V3)",
-        "price": 1499,
-        "image": "/website/discount/d1.png"
+      "warrantyInformation": "1 year warranty",
+      "shippingInformation": "Ships in 1-2 business days",
+      "availabilityStatus": "In Stock",
+      "reviews": [
+        {
+          "rating": 5,
+          "comment": "Highly recommended!",
+          "date": "2025-04-30T09:41:02.054Z",
+          "reviewerName": "Jace Smith",
+          "reviewerEmail": "jace.smith@x.dummyjson.com"
+        },
+        {
+          "rating": 4,
+          "comment": "Very satisfied!",
+          "date": "2025-04-30T09:41:02.054Z",
+          "reviewerName": "Harper Kelly",
+          "reviewerEmail": "harper.kelly@x.dummyjson.com"
+        }
+      ],
+      "returnPolicy": "30 days return policy",
+      "minimumOrderQuantity": 1,
+      "meta": {
+        "createdAt": "2025-04-30T09:41:02.054Z",
+        "updatedAt": "2025-04-30T09:41:02.054Z",
+        "barcode": "1000000000002",
+        "qrCode": "https://cdn.dummyjson.com/public/qr-code.png"
       },
-      {
-        "id": 5,
-        "title": "Apple iPhone 14 Pro 1TB Gold",
-        "title2": "(MQ2V3)",
-        "price": 1499,
-        "image": "/website/discount/d1.png"
+      "images": [
+        "/website/discount/d2.png"
+      ],
+      "thumbnail": "/website/discount/d2.png"
+    },
+    {
+      "id": 3,
+      "title": "Apple Watch Series 9 GPS 41mm Starlight Aluminium",
+      "description": "Apple Watch Series 9 GPS 41mm Starlight Aluminium. A reliable product with quality build and everyday performance.",
+      "category": "smartphones",
+      "price": 399,
+      "discountPercentage": 10,
+      "rating": 4.5,
+      "stock": 50,
+      "tags": [
+        "smartphones",
+        "apple"
+      ],
+      "brand": "Apple",
+      "sku": "SKU-3",
+      "weight": 1,
+      "dimensions": {
+        "width": 10,
+        "height": 15,
+        "depth": 5
       },
-      {
-        "id": 6,
-        "title": "Apple iPhone 14 Pro 1TB Gold",
-        "title2": "(MQ2V3)",
-        "price": 1499,
-        "image": "/website/discount/d1.png"
+      "warrantyInformation": "1 year warranty",
+      "shippingInformation": "Ships in 1-2 business days",
+      "availabilityStatus": "In Stock",
+      "reviews": [
+        {
+          "rating": 5,
+          "comment": "Highly recommended!",
+          "date": "2025-04-30T09:41:02.054Z",
+          "reviewerName": "Jace Smith",
+          "reviewerEmail": "jace.smith@x.dummyjson.com"
+        },
+        {
+          "rating": 4,
+          "comment": "Very satisfied!",
+          "date": "2025-04-30T09:41:02.054Z",
+          "reviewerName": "Harper Kelly",
+          "reviewerEmail": "harper.kelly@x.dummyjson.com"
+        }
+      ],
+      "returnPolicy": "30 days return policy",
+      "minimumOrderQuantity": 1,
+      "meta": {
+        "createdAt": "2025-04-30T09:41:02.054Z",
+        "updatedAt": "2025-04-30T09:41:02.054Z",
+        "barcode": "1000000000003",
+        "qrCode": "https://cdn.dummyjson.com/public/qr-code.png"
       },
-      {
-        "id": 7,
-        "title": "Apple iPhone 14 Pro 1TB Gold",
-        "title2": "(MQ2V3)",
-        "price": 1499,
-        "image": "/website/discount/d1.png"
+      "images": [
+        "/website/discount/d3.png"
+      ],
+      "thumbnail": "/website/discount/d3.png"
+    },
+    {
+      "id": 4,
+      "title": "Apple iPhone 14 Pro 1TB Gold (MQ2V3)",
+      "description": "Apple iPhone 14 Pro 1TB Gold (MQ2V3). A reliable product with quality build and everyday performance.",
+      "category": "smartphones",
+      "price": 1499,
+      "discountPercentage": 10,
+      "rating": 4.5,
+      "stock": 50,
+      "tags": [
+        "smartphones",
+        "apple"
+      ],
+      "brand": "Apple",
+      "sku": "SKU-4",
+      "weight": 1,
+      "dimensions": {
+        "width": 10,
+        "height": 15,
+        "depth": 5
       },
-      {
-        "id": 8,
-        "title": "Apple iPhone 14 Pro 1TB Gold",
-        "title2": "(MQ2V3)",
-        "price": 1499,
-        "image": "/website/discount/d1.png"
-      }
-      
-    ]
+      "warrantyInformation": "1 year warranty",
+      "shippingInformation": "Ships in 1-2 business days",
+      "availabilityStatus": "In Stock",
+      "reviews": [
+        {
+          "rating": 5,
+          "comment": "Highly recommended!",
+          "date": "2025-04-30T09:41:02.054Z",
+          "reviewerName": "Jace Smith",
+          "reviewerEmail": "jace.smith@x.dummyjson.com"
+        },
+        {
+          "rating": 4,
+          "comment": "Very satisfied!",
+          "date": "2025-04-30T09:41:02.054Z",
+          "reviewerName": "Harper Kelly",
+          "reviewerEmail": "harper.kelly@x.dummyjson.com"
+        }
+      ],
+      "returnPolicy": "30 days return policy",
+      "minimumOrderQuantity": 1,
+      "meta": {
+        "createdAt": "2025-04-30T09:41:02.054Z",
+        "updatedAt": "2025-04-30T09:41:02.054Z",
+        "barcode": "1000000000004",
+        "qrCode": "https://cdn.dummyjson.com/public/qr-code.png"
+      },
+      "images": [
+        "/website/discount/d4.png"
+      ],
+      "thumbnail": "/website/discount/d4.png"
+    },
+    {
+      "id": 5,
+      "title": "Samsung Galaxy Watch6 Classic 47mm Black",
+      "description": "Samsung Galaxy Watch6 Classic 47mm Black. A reliable product with quality build and everyday performance.",
+      "category": "smartphones",
+      "price": 369,
+      "discountPercentage": 10,
+      "rating": 4.5,
+      "stock": 50,
+      "tags": [
+        "smartphones",
+        "samsung"
+      ],
+      "brand": "Samsung",
+      "sku": "SKU-5",
+      "weight": 1,
+      "dimensions": {
+        "width": 10,
+        "height": 15,
+        "depth": 5
+      },
+      "warrantyInformation": "1 year warranty",
+      "shippingInformation": "Ships in 1-2 business days",
+      "availabilityStatus": "In Stock",
+      "reviews": [
+        {
+          "rating": 5,
+          "comment": "Highly recommended!",
+          "date": "2025-04-30T09:41:02.054Z",
+          "reviewerName": "Jace Smith",
+          "reviewerEmail": "jace.smith@x.dummyjson.com"
+        },
+        {
+          "rating": 4,
+          "comment": "Very satisfied!",
+          "date": "2025-04-30T09:41:02.054Z",
+          "reviewerName": "Harper Kelly",
+          "reviewerEmail": "harper.kelly@x.dummyjson.com"
+        }
+      ],
+      "returnPolicy": "30 days return policy",
+      "minimumOrderQuantity": 1,
+      "meta": {
+        "createdAt": "2025-04-30T09:41:02.054Z",
+        "updatedAt": "2025-04-30T09:41:02.054Z",
+        "barcode": "1000000000005",
+        "qrCode": "https://cdn.dummyjson.com/public/qr-code.png"
+      },
+      "images": [
+        "/website/products/pc5.png"
+      ],
+      "thumbnail": "/website/products/pc5.png"
+    },
+    {
+      "id": 6,
+      "title": "Galaxy Z Fold5 Unlocked | 256GB | Phantom Black",
+      "description": "Galaxy Z Fold5 Unlocked | 256GB | Phantom Black. A reliable product with quality build and everyday performance.",
+      "category": "smartphones",
+      "price": 1799,
+      "discountPercentage": 10,
+      "rating": 4.5,
+      "stock": 50,
+      "tags": [
+        "smartphones",
+        "samsung"
+      ],
+      "brand": "Samsung",
+      "sku": "SKU-6",
+      "weight": 1,
+      "dimensions": {
+        "width": 10,
+        "height": 15,
+        "depth": 5
+      },
+      "warrantyInformation": "1 year warranty",
+      "shippingInformation": "Ships in 1-2 business days",
+      "availabilityStatus": "In Stock",
+      "reviews": [
+        {
+          "rating": 5,
+          "comment": "Highly recommended!",
+          "date": "2025-04-30T09:41:02.054Z",
+          "reviewerName": "Jace Smith",
+          "reviewerEmail": "jace.smith@x.dummyjson.com"
+        },
+        {
+          "rating": 4,
+          "comment": "Very satisfied!",
+          "date": "2025-04-30T09:41:02.054Z",
+          "reviewerName": "Harper Kelly",
+          "reviewerEmail": "harper.kelly@x.dummyjson.com"
+        }
+      ],
+      "returnPolicy": "30 days return policy",
+      "minimumOrderQuantity": 1,
+      "meta": {
+        "createdAt": "2025-04-30T09:41:02.054Z",
+        "updatedAt": "2025-04-30T09:41:02.054Z",
+        "barcode": "1000000000006",
+        "qrCode": "https://cdn.dummyjson.com/public/qr-code.png"
+      },
+      "images": [
+        "/website/products/pc6.png"
+      ],
+      "thumbnail": "/website/products/pc6.png"
+    },
+    {
+      "id": 7,
+      "title": "Galaxy Buds FE Graphite",
+      "description": "Galaxy Buds FE Graphite. A reliable product with quality build and everyday performance.",
+      "category": "mobile-accessories",
+      "price": 99.99,
+      "discountPercentage": 10,
+      "rating": 4.5,
+      "stock": 50,
+      "tags": [
+        "mobile-accessories",
+        "samsung"
+      ],
+      "brand": "Samsung",
+      "sku": "SKU-7",
+      "weight": 1,
+      "dimensions": {
+        "width": 10,
+        "height": 15,
+        "depth": 5
+      },
+      "warrantyInformation": "1 year warranty",
+      "shippingInformation": "Ships in 1-2 business days",
+      "availabilityStatus": "In Stock",
+      "reviews": [
+        {
+          "rating": 5,
+          "comment": "Highly recommended!",
+          "date": "2025-04-30T09:41:02.054Z",
+          "reviewerName": "Jace Smith",
+          "reviewerEmail": "jace.smith@x.dummyjson.com"
+        },
+        {
+          "rating": 4,
+          "comment": "Very satisfied!",
+          "date": "2025-04-30T09:41:02.054Z",
+          "reviewerName": "Harper Kelly",
+          "reviewerEmail": "harper.kelly@x.dummyjson.com"
+        }
+      ],
+      "returnPolicy": "30 days return policy",
+      "minimumOrderQuantity": 1,
+      "meta": {
+        "createdAt": "2025-04-30T09:41:02.054Z",
+        "updatedAt": "2025-04-30T09:41:02.054Z",
+        "barcode": "1000000000007",
+        "qrCode": "https://cdn.dummyjson.com/public/qr-code.png"
+      },
+      "images": [
+        "/website/products/pc7.png"
+      ],
+      "thumbnail": "/website/products/pc7.png"
+    },
+    {
+      "id": 8,
+      "title": "Apple iPad 9 10.2\" 64GB Wi-Fi Silver (MK2L3) 2021",
+      "description": "Apple iPad 9 10.2\" 64GB Wi-Fi Silver (MK2L3) 2021. A reliable product with quality build and everyday performance.",
+      "category": "tablets",
+      "price": 398,
+      "discountPercentage": 10,
+      "rating": 4.5,
+      "stock": 50,
+      "tags": [
+        "tablets",
+        "apple"
+      ],
+      "brand": "Apple",
+      "sku": "SKU-8",
+      "weight": 1,
+      "dimensions": {
+        "width": 10,
+        "height": 15,
+        "depth": 5
+      },
+      "warrantyInformation": "1 year warranty",
+      "shippingInformation": "Ships in 1-2 business days",
+      "availabilityStatus": "In Stock",
+      "reviews": [
+        {
+          "rating": 5,
+          "comment": "Highly recommended!",
+          "date": "2025-04-30T09:41:02.054Z",
+          "reviewerName": "Jace Smith",
+          "reviewerEmail": "jace.smith@x.dummyjson.com"
+        },
+        {
+          "rating": 4,
+          "comment": "Very satisfied!",
+          "date": "2025-04-30T09:41:02.054Z",
+          "reviewerName": "Harper Kelly",
+          "reviewerEmail": "harper.kelly@x.dummyjson.com"
+        }
+      ],
+      "returnPolicy": "30 days return policy",
+      "minimumOrderQuantity": 1,
+      "meta": {
+        "createdAt": "2025-04-30T09:41:02.054Z",
+        "updatedAt": "2025-04-30T09:41:02.054Z",
+        "barcode": "1000000000008",
+        "qrCode": "https://cdn.dummyjson.com/public/qr-code.png"
+      },
+      "images": [
+        "/website/products/pc8.png"
+      ],
+      "thumbnail": "/website/products/pc8.png"
+    }
+  ]
 }

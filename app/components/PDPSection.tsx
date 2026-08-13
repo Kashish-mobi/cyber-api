@@ -28,9 +28,9 @@ export default function PDPSection() {
               key={product.id}
               id={product.id}
               title={product.title}
-              title2={"title2" in product ? product.title2 : undefined}
+              brand={"brand" in product ? product.brand : undefined}
               price={product.price}
-              image={product.image}
+              thumbnail={product.thumbnail}
               buttonText={productsData.buyNowLabel ?? ui.buyNow}
               currencySymbol={ui.currencySymbol}
             />

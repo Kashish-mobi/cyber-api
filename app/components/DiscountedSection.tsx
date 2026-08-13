@@ -3,11 +3,12 @@ import ProductCard from "./ui/ProductCard";
 import ProductGrid from "./ui/ProductGrid";
 
 export type DiscountedProduct = {
-  id: string;
+  id: string | number;
   title: string;
+  brand?: string;
   title2?: string;
   price: number;
-  image: string;
+  thumbnail: string;
 };
 
 type DiscountedSectionProps = {
@@ -36,9 +37,10 @@ export default function DiscountedSection({
               key={product.id}
               id={product.id}
               title={product.title}
+              brand={product.brand}
               title2={product.title2}
               price={product.price}
-              image={product.image}
+              thumbnail={product.thumbnail}
               buttonText={buttonText}
               currencySymbol={currencySymbol}
             />
