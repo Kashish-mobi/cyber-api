@@ -45,25 +45,56 @@ type ProductState = {
   products: Product[];
   totalProducts: number;
   product: Product | null;
+
+  currentPage: number;
+  limit: number;
+
   loading: boolean;
   error: string | null;
 };
 
 export const getProducts = createAsyncThunk(
   "products/getProducts",
-  async () => {
-    const response = await GetData("/products");
-    return response;
+  async (args?: { page?: number; limit?: number; category?: string }) => {
+    const page = args?.page ?? 1;
+    const limit = args?.limit ?? 12;
+    const skip = (page - 1) * limit;
+    const category = args?.category || "smartphones";
+
+    const response = await GetData(
+      `/products/category/${encodeURIComponent(category)}?limit=${limit}&skip=${skip}`
+    );
+
+    return {
+      ...response,
+      page,
+      limit,
+    };
   }
 );
 
 export const searchProducts = createAsyncThunk(
   "products/searchProducts",
-  async (searchTerm: string) => {
+  async ({
+    searchTerm,
+    page = 1,
+    limit = 12,
+  }: {
+    searchTerm: string;
+    page?: number;
+    limit?: number;
+  }) => {
+    const skip = (page - 1) * limit;
+
     const response = await GetData(
-      `/products/search?q=${encodeURIComponent(searchTerm)}`
+      `/products/search?q=${encodeURIComponent(searchTerm)}&limit=${limit}&skip=${skip}`
     );
-    return response;
+
+    return {
+      ...response,
+      page,
+      limit,
+    };
   }
 );
 
@@ -79,6 +110,10 @@ const initialState: ProductState = {
   products: [],
   totalProducts: 0,
   product: null,
+
+  currentPage: 1,
+  limit: 12,
+
   loading: false,
   error: null,
 };
@@ -97,6 +132,8 @@ const productSlice = createSlice({
       state.loading = false;
       state.products = action.payload.products;
       state.totalProducts = action.payload.total;
+      state.currentPage = action.payload.page;
+      state.limit = action.payload.limit;
     });
 
     builder.addCase(getProducts.rejected, (state, action) => {
@@ -111,6 +148,8 @@ const productSlice = createSlice({
       state.loading = false;
       state.products = action.payload.products;
       state.totalProducts = action.payload.total;
+      state.currentPage = action.payload.page;
+      state.limit = action.payload.limit;
     });
     builder.addCase(searchProducts.rejected, (state, action) => {
       state.loading = false;

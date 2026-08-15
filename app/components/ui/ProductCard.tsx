@@ -5,8 +5,11 @@ import AppImage from "./Image";
 import Button from "./Button";
 import Heading from "./Heading";
 import Paragraph from "./Paragraph";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "nextjs-toploader/app";
+import { useAppSelector } from "@/redux/hooks";
+import { store } from "@/redux/store";
+import { addToWishlist, removeFromWishlist } from "@/redux/slices/wishlistSlice";
 
 /**
  * Single source of truth for product card UI (PDP + Discount).
@@ -27,7 +30,7 @@ const cardStyles = {
 } as const;
 
 export type ProductCardProps = {
-  id: string | number;
+  id: number;
   title: string;
   /** DummyJSON `brand` (preferred subtitle) */
   brand?: string;
@@ -51,6 +54,14 @@ export default function ProductCard({
   currencySymbol = "$",
   onWishlist,
 }: ProductCardProps) {
+  const [hasMounted, setHasMounted] = useState(false);
+  const wishlist = useAppSelector((state) => state.wishlist.wishlist);
+
+  useEffect(() => {
+    setHasMounted(true);
+  }, []);
+
+  const isWishlist = hasMounted && wishlist.includes(Number(id));
   // One title block like PDP — keeps card height consistent
   const subtitle = brand || title2;
   const displayTitle = subtitle ? (
@@ -62,10 +73,14 @@ export default function ProductCard({
   ) : (
     title
   );
-  const [isWishlist, setIsWishlist] = useState(false);
   const router = useRouter();
+  const dispatch = store.dispatch;
   const handleWishlist = () => {
-    setIsWishlist(!isWishlist);
+    if(isWishlist){
+      dispatch(removeFromWishlist(Number(id)));
+    }else{
+      dispatch(addToWishlist(Number(id)));
+    }
   };
 
   return (

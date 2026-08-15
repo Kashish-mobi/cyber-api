@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import homepage from "@/data/homepage.json";
-import { CompanyLogo, User } from "../icons";
+import { CompanyLogo, User, WishList } from "../icons";
 import { getIcon, type IconName } from "@/lib/icons";
 import Paragraph from "./ui/Paragraph";
 import SearchBox from "./ui/SearchBox";
@@ -64,12 +64,23 @@ function UserMenu() {
 
 export default function Header() {
   const [menuOpen, setMenuOpen] = useState(false);
+  const [hasMounted, setHasMounted] = useState(false);
   const isAuthenticated = useSelector(
     (state: RootState) => state.user.isAuthenticated
   );
+  const wishlist = useSelector((state: RootState) => state.wishlist.wishlist);
+
+  useEffect(() => {
+    setHasMounted(true);
+  }, []);
+
+  const isWishlistFilled = hasMounted && wishlist.length > 0;
 
   const userActionLink = header.actionLinks.find((link) => link.icon === "user");
   const actionIcon = (name: string) => {
+    if (name === "wishlist") {
+      return <WishList isWishlist={isWishlistFilled} />;
+    }
     const Icon = getIcon(name as IconName);
     return Icon ? <Icon /> : null;
   };

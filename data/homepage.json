@@ -835,7 +835,7 @@
         }
       ]
     },
-    "buyNowLabel": "Buy Now"
+    "buyNowLabel": "View Product"
   },
   "popular": {
     "items": [
@@ -1113,7 +1113,7 @@
         "thumbnail": "/website/discount/d4.png"
       }
     ],
-    "buyNowLabel": "Buy Now"
+    "buyNowLabel": "View Product"
   },
   "banner": {
     "title": {
@@ -1227,7 +1227,7 @@
     ]
   },
   "ui": {
-    "buyNow": "Buy Now",
+    "buyNow": "View Product",
     "openMenu": "Open menu",
     "closeMenu": "Close menu",
     "currencySymbol": "$"

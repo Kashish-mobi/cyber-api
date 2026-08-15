@@ -3,7 +3,7 @@ import ProductCard from "./ui/ProductCard";
 import ProductGrid from "./ui/ProductGrid";
 
 export type DiscountedProduct = {
-  id: string | number;
+  id: number;
   title: string;
   brand?: string;
   title2?: string;
@@ -21,7 +21,7 @@ type DiscountedSectionProps = {
 export default function DiscountedSection({
   title,
   items,
-  buttonText = "Buy Now",
+  buttonText = "View Product",
   currencySymbol = "$",
 }: DiscountedSectionProps) {
   return (
@@ -35,7 +35,7 @@ export default function DiscountedSection({
           {items.map((product) => (
             <ProductCard
               key={product.id}
-              id={product.id}
+              id={Number(product.id)}
               title={product.title}
               brand={product.brand}
               title2={product.title2}

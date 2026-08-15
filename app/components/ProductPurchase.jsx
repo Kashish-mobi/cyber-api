@@ -1,10 +1,11 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Heading from "@/app/components/ui/Heading";
 import Paragraph from "@/app/components/ui/Paragraph";
 import Button from "@/app/components/ui/Button";
 import AppImage from "@/app/components/ui/Image";
+import { addToWishlist, removeFromWishlist } from "@/redux/slices/wishlistSlice";
 import {
   ScreenSize,
   CPU,
@@ -15,8 +16,10 @@ import {
   Delivery,
   Guarentee,
   Stock,
+  Wishlist,
 } from "@/app/icons";
 import { cn } from "@/lib/cn";
+import { useDispatch, useSelector } from "react-redux";
 
 const iconMap = {
   ScreenSize,
@@ -30,7 +33,7 @@ const iconMap = {
   Stock,
 };
 
-function ProductGallery({ images, thumbnail, name }) {
+function ProductGallery({ images, thumbnail, name, isInWishlist, onWishlist }) {
   const galleryImages =
     images?.length > 0
       ? images
@@ -73,7 +76,14 @@ function ProductGallery({ images, thumbnail, name }) {
           </button>
         ))}
       </div>
-      <div className="flex-1 w-full min-h-[329px] md:min-h-[516px] flex items-center justify-center">
+      <div className="relative flex-1 w-full min-h-[329px] md:min-h-[516px] flex items-center justify-center">
+        {/* <button
+          type="button"
+          className="absolute top-0 right-0 z-10 cursor-pointer"
+          onClick={onWishlist}
+        >
+          <Wishlist isWishlist={isInWishlist} />
+        </button> */}
         <AppImage
           src={activeImage}
           alt={name}
@@ -179,6 +189,24 @@ function InfoCard({ product }) {
 }
 
 export default function ProductPurchase({ product }) {
+  const [hasMounted, setHasMounted] = useState(false);
+  const wishlist = useSelector((state) => state.wishlist.wishlist);
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    setHasMounted(true);
+  }, []);
+
+  const isInWishlist = hasMounted && wishlist.includes(Number(product.id));
+
+  const handleWishlist = () => {
+    if (isInWishlist) {
+      dispatch(removeFromWishlist(Number(product.id)));
+    } else {
+      dispatch(addToWishlist(Number(product.id)));
+    }
+  };
+
   return (
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-[36px] md:gap-[48px] items-center">
       <div className="col-span-1">
@@ -186,6 +214,8 @@ export default function ProductPurchase({ product }) {
           images={product.images}
           thumbnail={product.thumbnail}
           name={product.name}
+          isInWishlist={isInWishlist}
+          onWishlist={handleWishlist}
         />
       </div>
 
@@ -196,8 +226,9 @@ export default function ProductPurchase({ product }) {
   <Button
     variant="dark"
     className="w-full sm:flex-1 !min-w-0 !h-[56px]"
+    onClick={handleWishlist}
   >
-    Add to Wishlist
+    {isInWishlist ? "Remove from Wishlist" : "Add to Wishlist"}
   </Button>
 
   <Button

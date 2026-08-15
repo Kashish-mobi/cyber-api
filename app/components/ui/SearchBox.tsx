@@ -2,7 +2,8 @@
 import { Search, Cross } from "@/app/icons";
 import { cn } from "@/lib/cn";
 import { useEffect, useState } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
+import { useRouter } from "nextjs-toploader/app";
 
 function SearchBox({
   placeholder,

@@ -1,19 +1,19 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useRouter } from "nextjs-toploader/app";
+import { useSearchParams } from "next/navigation";
 import BreadCrumbs from "@/app/components/BreadCrumbs";
 import { FilterSectionDesktop, FilterSectionMobile } from "@/app/components/FilterSection";
 import ProductCard from "@/app/components/ui/ProductCard";
-import productsPageData from "@/data/productsPage.json";
 import Button from "@/app/components/ui/Button";
 import DropDown from "@/app/components/ui/DropDown";
 import Paragraph from "@/app/components/ui/Paragraph";
 import Pagination from "@/app/components/ui/Pagination";
 import { FilterIcon } from "@/app/icons";
-import { useSearchParams } from "next/navigation";
-  import AppImage from "@/app/components/ui/Image";
-  import { useSelector } from "react-redux";
-import { RootState } from "@/redux/store";
+import AppImage from "@/app/components/ui/Image";
+import { hideLoader } from "@/redux/loaderSlice";
+import { store } from "@/redux/store";
 
 type Product = {
   id: number;
@@ -24,12 +24,36 @@ type Product = {
   thumbnail: string;
 };
 
-export default function ProductsClient({ products, relatedProducts, totalProducts }: { products: Product[], relatedProducts: Product[], totalProducts: number }) {
-  const [currentPage, setCurrentPage] = useState(1);
+export default function ProductsClient({
+  products,
+  totalProducts,
+  currentPage,
+  limit,
+}: {
+  products: Product[];
+  relatedProducts?: Product[];
+  totalProducts: number;
+  currentPage: number;
+  limit: number;
+}) {
   const [filterMenuOpen, setFilterMenuOpen] = useState(false);
   const searchParams = useSearchParams();
+  const router = useRouter();
   const category = searchParams.get("category");
   const query = searchParams.get("q");
+  const totalPages = Math.max(1, Math.ceil(totalProducts / limit));
+
+  useEffect(() => {
+    store.dispatch(hideLoader());
+  }, [currentPage, products]);
+
+  const goToPage = (page: number) => {
+    if (page < 1 || page > totalPages || page === currentPage) return;
+
+    const params = new URLSearchParams(searchParams.toString());
+    params.set("page", String(page));
+    router.push(`/products?${params.toString()}`);
+  };
   return (
     <div className="flex justify-center">
       <div className="container">
@@ -109,7 +133,7 @@ export default function ProductsClient({ products, relatedProducts, totalProduct
                   brand={item.brand || item.category || ""}
                   price={item.price}
                   thumbnail={item.thumbnail}
-                  buttonText="Buy Now"
+                  buttonText="View Product"
                 />
               )) : 
              null
@@ -121,11 +145,13 @@ export default function ProductsClient({ products, relatedProducts, totalProduct
                 <AppImage src="/website/no-products.avif" alt="No products found" width={500} height={500} className="w-full h-full max-w-[500px] max-h-[500px]" />
               </div>
             )}
+            {totalPages > 1 && (
             <Pagination
-              totalPages={12}
+              totalPages={totalPages}
               currentPage={currentPage}
-              onPageChange={(page) => setCurrentPage(page)}
+              onPageChange={goToPage}
             />
+            )}
           </div>
         </div>
       </div>

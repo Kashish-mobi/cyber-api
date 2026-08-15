@@ -9,11 +9,16 @@ import {
   logout,
   restoreLogin,
 } from "./slices/userSlice";
+import { hydrateWishlist, loadWishlist } from "./slices/wishlistSlice";
 import { store } from "./store";
 
 function LoginSession() {
   const dispatch = useAppDispatch();
   const { isAuthenticated, expiresAt } = useAppSelector((state) => state.user);
+
+  useEffect(() => {
+    dispatch(hydrateWishlist(loadWishlist()));
+  }, [dispatch]);
 
   // When page loads, restore login from localStorage
   useEffect(() => {

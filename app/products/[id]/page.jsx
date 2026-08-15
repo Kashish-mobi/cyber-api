@@ -3,7 +3,7 @@ import ProductPurchase from "@/app/components/ProductPurchase";
 import ProductDetails from "@/app/components/ProductDetails";
 import ProductReviews from "@/app/components/ProductReviews";
 import DiscountedSection from "@/app/components/DiscountedSection";
-import Image from "@/app/components/ui/Image";
+import AppImage from "@/app/components/ui/Image";
 
 import { store } from "@/redux/store";
 import {
@@ -24,7 +24,7 @@ export default async function ProductPage({
 
   const [result, result2] = await Promise.all([
     store.dispatch(getProductsById(Number(id))),
-    store.dispatch(getProducts()),
+    store.dispatch(getProducts({ page: 1, limit: 12 })),
   ]);
 
   // =========================================
@@ -34,7 +34,7 @@ export default async function ProductPage({
   if (getProductsById.rejected.match(result)) {
     return (
       <div className="flex justify-center items-center">
-        <Image
+        <AppImage
           src="/website/404.png"
           alt="Product not found"
           width={1000}
