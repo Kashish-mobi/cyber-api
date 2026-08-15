@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Button from "./Button";
 import { DownArrow, UpArrow } from "@/app/icons";
 
@@ -8,29 +8,36 @@ type DropDownProps = {
   options: string[];
   selected: string;
   className?: string;
+  onSelect?: (option: string) => void;
 };
 
 const DropDown = ({
   options,
   selected: initialSelected,
   className,
+  onSelect,
 }: DropDownProps) => {
   const [open, setOpen] = useState(false);
   const [selected, setSelected] = useState(initialSelected);
 
+  useEffect(() => {
+    setSelected(initialSelected);
+  }, [initialSelected]);
+
   const handleSelect = (option: string) => {
     setSelected(option);
     setOpen(false);
+    onSelect?.(option);
   };
 
   return (
-    <div className="relative z-50">
+    <div className={`relative z-10 min-w-0 ${className || ""}`}>
       <Button
         variant="ghost"
         onClick={() => setOpen((prev) => !prev)}
-        className={`flex lg:h-[40px] h-[56px] min-w-[163px] sm:min-w-[256px] items-center rounded-[8px] !justify-between gap-3 border-light-muted border-[0.5px] px-[16px] text-primary ${className}`}
+        className="flex h-[56px] w-full min-w-0 items-center !justify-between gap-3 rounded-[8px] border-[0.5px] border-light-muted px-[12px] text-primary lg:h-[40px]"
       >
-        <span className="text-[14px]">
+        <span className="min-w-0 truncate text-left text-[14px]">
           {selected}
         </span>
 
@@ -41,7 +48,7 @@ const DropDown = ({
         <div
           className="
             absolute right-0 top-[calc(100%+8px)]
-            z-[99]
+            z-20
             min-w-[220px]
             overflow-hidden
             rounded-[6px]

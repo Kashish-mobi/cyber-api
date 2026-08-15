@@ -10,6 +10,7 @@ import { useRouter } from "nextjs-toploader/app";
 import { useAppSelector } from "@/redux/hooks";
 import { store } from "@/redux/store";
 import { addToWishlist, removeFromWishlist } from "@/redux/slices/wishlistSlice";
+import { addToCart, removeFromCart } from "@/redux/slices/cartSlice";
 
 /**
  * Single source of truth for product card UI (PDP + Discount).
@@ -56,12 +57,14 @@ export default function ProductCard({
 }: ProductCardProps) {
   const [hasMounted, setHasMounted] = useState(false);
   const wishlist = useAppSelector((state) => state.wishlist.wishlist);
+  const cart = useAppSelector((state) => state.cart.cart);
 
   useEffect(() => {
     setHasMounted(true);
   }, []);
 
   const isWishlist = hasMounted && wishlist.includes(Number(id));
+  const isInCart = hasMounted && cart.some((item) => item.id === Number(id));
   // One title block like PDP — keeps card height consistent
   const subtitle = brand || title2;
   const displayTitle = subtitle ? (
@@ -118,9 +121,38 @@ export default function ProductCard({
         </Paragraph>
       </div>
 
-      <Button variant="solid" text={buttonText} className={cardStyles.button} onClick={() => {
-        router.push(`/products/${String(id)}`);
-      }} />
+      <Button
+        variant="solid"
+        text={
+          buttonText === "View Product"
+            ? buttonText
+            : isInCart
+              ? "Remove from Cart"
+              : "Add to Cart"
+        }
+        className={cardStyles.button}
+        onClick={() => {
+          if (buttonText === "View Product") {
+            router.push(`/products/${String(id)}`);
+            return;
+          }
+
+          if (isInCart) {
+            dispatch(removeFromCart(Number(id)));
+            return;
+          }
+
+          dispatch(
+            addToCart({
+              id: Number(id),
+              title,
+              price,
+              thumbnail,
+              quantity: 1,
+            })
+          );
+        }}
+      />
     </div>
   );
 }

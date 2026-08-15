@@ -6,6 +6,7 @@ import Paragraph from "@/app/components/ui/Paragraph";
 import Button from "@/app/components/ui/Button";
 import AppImage from "@/app/components/ui/Image";
 import { addToWishlist, removeFromWishlist } from "@/redux/slices/wishlistSlice";
+import { addToCart, removeFromCart } from "@/redux/slices/cartSlice";
 import {
   ScreenSize,
   CPU,
@@ -20,6 +21,7 @@ import {
 } from "@/app/icons";
 import { cn } from "@/lib/cn";
 import { useDispatch, useSelector } from "react-redux";
+import { useRouter } from "nextjs-toploader/app";
 
 const iconMap = {
   ScreenSize,
@@ -191,13 +193,16 @@ function InfoCard({ product }) {
 export default function ProductPurchase({ product }) {
   const [hasMounted, setHasMounted] = useState(false);
   const wishlist = useSelector((state) => state.wishlist.wishlist);
+  const cart = useSelector((state) => state.cart.cart);
   const dispatch = useDispatch();
-
+  const router = useRouter();
   useEffect(() => {
     setHasMounted(true);
   }, []);
 
   const isInWishlist = hasMounted && wishlist.includes(Number(product.id));
+  const isInCart =
+    hasMounted && cart.some((item) => item.id === Number(product.id));
 
   const handleWishlist = () => {
     if (isInWishlist) {
@@ -205,6 +210,24 @@ export default function ProductPurchase({ product }) {
     } else {
       dispatch(addToWishlist(Number(product.id)));
     }
+  };
+
+  const handleCart = () => {
+    if (isInCart) {
+      dispatch(removeFromCart(Number(product.id)));
+      return;
+    }
+
+    dispatch(
+      addToCart({
+        id: Number(product.id),
+        title: product.name,
+        price: product.price,
+        thumbnail: product.thumbnail,
+        quantity: 1,
+      })
+    );
+    router.push("/cart");
   };
 
   return (
@@ -234,8 +257,9 @@ export default function ProductPurchase({ product }) {
   <Button
     variant="fill-dark"
     className="w-full sm:flex-1 !min-w-0 !h-[56px]"
+    onClick={handleCart}
   >
-    Add to Cart
+    {isInCart ? "Remove from Cart" : "Add to Cart"}
   </Button>
 </div>
 

@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import homepage from "@/data/homepage.json";
-import { CompanyLogo, User, WishList } from "../icons";
+import { CompanyLogo, User, WishList, Cart } from "../icons";
 import { getIcon, type IconName } from "@/lib/icons";
 import Paragraph from "./ui/Paragraph";
 import SearchBox from "./ui/SearchBox";
@@ -69,17 +69,33 @@ export default function Header() {
     (state: RootState) => state.user.isAuthenticated
   );
   const wishlist = useSelector((state: RootState) => state.wishlist.wishlist);
+  const cart = useSelector((state: RootState) => state.cart.cart);
 
   useEffect(() => {
     setHasMounted(true);
   }, []);
 
   const isWishlistFilled = hasMounted && wishlist.length > 0;
+  const cartCount = hasMounted
+    ? cart.reduce((sum, item) => sum + item.quantity, 0)
+    : 0;
 
   const userActionLink = header.actionLinks.find((link) => link.icon === "user");
   const actionIcon = (name: string) => {
     if (name === "wishlist") {
       return <WishList isWishlist={isWishlistFilled} />;
+    }
+    if (name === "cart") {
+      return (
+        <span className="relative inline-flex">
+          <Cart />
+          {cartCount > 0 ? (
+            <span className="absolute -top-[6px] -right-[8px] flex h-[18px] min-w-[18px] items-center justify-center rounded-full bg-primary px-[4px] text-[10px] font-[600] text-white">
+              {cartCount}
+            </span>
+          ) : null}
+        </span>
+      );
     }
     const Icon = getIcon(name as IconName);
     return Icon ? <Icon /> : null;
@@ -205,7 +221,7 @@ export default function Header() {
 
       <div
         onClick={() => setMenuOpen(false)}
-        className={`fixed inset-0 z-40 bg-black/40 transition-all duration-500 ease-in-out md:hidden ${
+        className={`fixed inset-0 z-[200] bg-black/40 transition-all duration-500 ease-in-out md:hidden ${
           menuOpen
             ? "visible opacity-100"
             : "pointer-events-none invisible opacity-0"
@@ -213,9 +229,10 @@ export default function Header() {
       />
 
       <div
-        className={`fixed top-0 right-0 z-50 h-screen w-[85%] max-w-[400px] transform overflow-y-auto bg-secondary shadow-2xl transition-transform duration-500 ease-in-out md:hidden ${
+        className={`fixed top-0 right-0 z-[210] h-screen w-[85%] max-w-[400px] transform overflow-y-auto bg-secondary shadow-2xl transition-transform duration-500 ease-in-out md:hidden ${
           menuOpen ? "translate-x-0" : "translate-x-full"
         }`}
+        onClick={(e) => e.stopPropagation()}
       >
         <div className="flex h-[72px] items-center justify-end border-b border-border-light px-[20px]">
           <button
@@ -231,9 +248,10 @@ export default function Header() {
         <div className="p-[20px]">
           <SearchBox
             placeholder={header.searchPlaceholder}
-            className="w-full !h-[52px]"
+            className="w-full !h-[52px] lg:!w-full"
             inputClassName="w-full bg-transparent text-[14px] outline-none"
             enableProductSearch
+            showSearchButton
             onSearch={() => setMenuOpen(false)}
           />
         </div>

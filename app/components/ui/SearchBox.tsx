@@ -3,23 +3,28 @@ import { Search, Cross } from "@/app/icons";
 import { cn } from "@/lib/cn";
 import { useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
-import { useRouter } from "nextjs-toploader/app";
+import Button from "./Button";
+import { useProductFilters } from "@/redux/useProductFilters";
 
 function SearchBox({
   placeholder,
   className,
   inputClassName,
   enableProductSearch = false,
+  showSearchButton = false,
   onSearch,
+  onValueChange,
 }: {
   placeholder: string;
   className?: string;
   inputClassName?: string;
   enableProductSearch?: boolean;
+  showSearchButton?: boolean;
   onSearch?: () => void;
+  onValueChange?: (value: string) => void;
 }) {
-  const router = useRouter();
   const searchParams = useSearchParams();
+  const { applyFilters } = useProductFilters();
   const queryFromUrl = searchParams.get("q") || "";
   const [value, setValue] = useState(
     enableProductSearch ? queryFromUrl : ""
@@ -33,12 +38,14 @@ function SearchBox({
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setValue(e.target.value);
+    onValueChange?.(e.target.value);
   };
 
   const handleClear = () => {
     setValue("");
-    if (enableProductSearch && searchParams.get("q")) {
-      router.push("/products");
+    onValueChange?.("");
+    if (enableProductSearch && queryFromUrl) {
+      applyFilters({ q: "" });
     }
   };
 
@@ -46,17 +53,12 @@ function SearchBox({
     e.preventDefault();
     if (!enableProductSearch) return;
 
-    const term = value.trim();
-    if (term) {
-      router.push(`/products?q=${encodeURIComponent(term)}`);
-    } else {
-      router.push("/products");
-    }
+    applyFilters({ q: value.trim() });
     onSearch?.();
   };
 
   return (
-    <form onSubmit={handleSubmit} className="flex items-center w-full">
+    <form onSubmit={handleSubmit} className="flex w-full flex-col gap-[12px]">
       <div
         className={cn(
           "flex w-full items-center gap-2 rounded-[8px] bg-surface p-[16px] lg:w-[372px] 2xl:h-[56px]",
@@ -65,7 +67,8 @@ function SearchBox({
       >
         <Search />
         <input
-          type="text"
+          type="search"
+          enterKeyHint="search"
           placeholder={placeholder}
           value={value}
           onChange={handleChange}
@@ -76,6 +79,15 @@ function SearchBox({
         />
         {value && <Cross onClick={handleClear} />}
       </div>
+      {showSearchButton && (
+        <Button
+          type="submit"
+          variant="fill-dark"
+          className="!h-[48px] w-full !min-w-0"
+        >
+          Search
+        </Button>
+      )}
     </form>
   );
 }

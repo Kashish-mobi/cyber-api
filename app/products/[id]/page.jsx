@@ -37,9 +37,9 @@ export default async function ProductPage({
         <AppImage
           src="/website/404.png"
           alt="Product not found"
-          width={1000}
-          height={1000}
-          className="w-full h-full object-cover"
+          width={500}
+          height={500}
+          className="w-full h-full max-w-[800px] max-h-[800px]"
         />
       </div>
     );

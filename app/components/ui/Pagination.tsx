@@ -3,6 +3,27 @@ import Button from "./Button";
 
 import { LeftArrow, RightArrow, Dot } from "@/app/icons";
 
+function getPaginationItems(totalPages: number, currentPage: number) {
+  if (totalPages <= 5) {
+    return Array.from({ length: totalPages }, (_, i) => i + 1);
+  }
+
+  const pages = new Set([1, currentPage, totalPages]);
+  if (totalPages >= 2) pages.add(2);
+
+  const sorted = [...pages].sort((a, b) => a - b);
+  const items: Array<number | "dots"> = [];
+
+  for (let i = 0; i < sorted.length; i++) {
+    if (i > 0 && sorted[i] - sorted[i - 1] > 1) {
+      items.push("dots");
+    }
+    items.push(sorted[i]);
+  }
+
+  return items;
+}
+
 const Pagination = ({
   totalPages,
   currentPage,
@@ -12,10 +33,7 @@ const Pagination = ({
   currentPage: number;
   onPageChange: (page: number) => void;
 }) => {
-  const showDots = totalPages > 5;
-  const visiblePages = showDots
-    ? [1, 2]
-    : Array.from({ length: totalPages }, (_, i) => i + 1);
+  const items = getPaginationItems(totalPages, currentPage);
 
   return (
     <div className="flex items-center justify-center gap-[16px]">
@@ -28,30 +46,21 @@ const Pagination = ({
       </Button>
 
       <div className="flex items-center justify-center md:gap-[10px] gap-[8px]">
-        {visiblePages.map((page) => (
-          <Button
-            key={page}
-            variant={currentPage === page ? "active-page" : "page"}
-            onClick={() => onPageChange(page)}
-            disabled={currentPage === page}
-          >
-            {page}
-          </Button>
-        ))}
-
-        {showDots && (
-          <>
-            <div className="flex items-end self-end">
+        {items.map((item, index) =>
+          item === "dots" ? (
+            <div key={`dots-${index}`} className="flex items-end self-end">
               <Dot />
             </div>
+          ) : (
             <Button
-              variant={currentPage === totalPages ? "active-page" : "page"}
-              onClick={() => onPageChange(totalPages)}
-              disabled={currentPage === totalPages}
+              key={item}
+              variant={currentPage === item ? "active-page" : "page"}
+              onClick={() => onPageChange(item)}
+              disabled={currentPage === item}
             >
-              {totalPages}
+              {item}
             </Button>
-          </>
+          )
         )}
       </div>
 

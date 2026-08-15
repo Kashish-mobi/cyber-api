@@ -1,5 +1,10 @@
 import { GetData } from "@/api/api";
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import {
+  applyProductFilters,
+  initialFilterState,
+  type FilterState,
+} from "./filterSlice";
 
 type Product = {
   id: number;
@@ -43,6 +48,7 @@ type Product = {
 
 type ProductState = {
   products: Product[];
+  categories: string[];
   totalProducts: number;
   product: Product | null;
 
@@ -53,47 +59,78 @@ type ProductState = {
   error: string | null;
 };
 
+function getSortQuery(sortBy: string) {
+  if (sortBy === "rating-asc") return "sortBy=rating&order=asc";
+  if (sortBy === "price-asc") return "sortBy=price&order=asc";
+  if (sortBy === "price-desc") return "sortBy=price&order=desc";
+  return "sortBy=rating&order=desc";
+}
+
+export const getCategories = createAsyncThunk(
+  "products/getCategories",
+  async () => {
+    const response = await GetData("/products/category-list");
+    return response;
+  }
+);
+
 export const getProducts = createAsyncThunk(
   "products/getProducts",
-  async (args?: { page?: number; limit?: number; category?: string }) => {
-    const page = args?.page ?? 1;
+  async (args?: Partial<FilterState> & { limit?: number }) => {
+    const filters: FilterState = { ...initialFilterState, ...args };
+    const page = filters.page;
     const limit = args?.limit ?? 12;
     const skip = (page - 1) * limit;
-    const category = args?.category || "smartphones";
+    const query = `limit=0&${getSortQuery(filters.sortBy)}`;
 
-    const response = await GetData(
-      `/products/category/${encodeURIComponent(category)}?limit=${limit}&skip=${skip}`
+    const endpoint =
+      filters.category === "all"
+        ? `/products?${query}`
+        : `/products/category/${encodeURIComponent(filters.category)}?${query}`;
+
+    const response = await GetData(endpoint);
+    const filtered = applyProductFilters(
+      (response.products || []) as Product[],
+      filters
     );
 
     return {
-      ...response,
+      products: filtered.slice(skip, skip + limit),
+      total: filtered.length,
       page,
       limit,
+      sortBy: filters.sortBy,
     };
   }
 );
 
 export const searchProducts = createAsyncThunk(
   "products/searchProducts",
-  async ({
-    searchTerm,
-    page = 1,
-    limit = 12,
-  }: {
-    searchTerm: string;
-    page?: number;
-    limit?: number;
-  }) => {
+  async (
+    args: Partial<FilterState> & { searchTerm?: string; limit?: number }
+  ) => {
+    const filters: FilterState = {
+      ...initialFilterState,
+      ...args,
+      q: args.searchTerm || args.q || "",
+    };
+    const page = filters.page;
+    const limit = args.limit ?? 12;
     const skip = (page - 1) * limit;
+    const query = `q=${encodeURIComponent(filters.q)}&limit=0&${getSortQuery(filters.sortBy)}`;
 
-    const response = await GetData(
-      `/products/search?q=${encodeURIComponent(searchTerm)}&limit=${limit}&skip=${skip}`
+    const response = await GetData(`/products/search?${query}`);
+    const filtered = applyProductFilters(
+      (response.products || []) as Product[],
+      filters
     );
 
     return {
-      ...response,
+      products: filtered.slice(skip, skip + limit),
+      total: filtered.length,
       page,
       limit,
+      sortBy: filters.sortBy,
     };
   }
 );
@@ -108,6 +145,7 @@ export const getProductsById = createAsyncThunk(
 
 const initialState: ProductState = {
   products: [],
+  categories: [],
   totalProducts: 0,
   product: null,
 
@@ -123,6 +161,9 @@ const productSlice = createSlice({
   initialState,
   reducers: {},
   extraReducers: (builder) => {
+    builder.addCase(getCategories.fulfilled, (state, action) => {
+      state.categories = action.payload || [];
+    });
     builder.addCase(getProducts.pending, (state) => {
       state.loading = true;
       state.error = null;

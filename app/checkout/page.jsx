@@ -315,7 +315,7 @@ const PaymentForm = () => {
   )
 }
 export default function CheckoutPage() {
-  const [step, setStep] = useState(3)
+  const [step, setStep] = useState(1)
   // Mobile: always show current + next (or last two when on final step)
   const mobileStart = Math.min(step - 1, checkoutSteps.length - 2)
   const mobileSteps = checkoutSteps.slice(mobileStart, mobileStart + 2)

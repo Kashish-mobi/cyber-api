@@ -10,6 +10,7 @@ import {
   restoreLogin,
 } from "./slices/userSlice";
 import { hydrateWishlist, loadWishlist } from "./slices/wishlistSlice";
+import { hydrateCart, loadCart } from "./slices/cartSlice";
 import { store } from "./store";
 
 function LoginSession() {
@@ -18,6 +19,7 @@ function LoginSession() {
 
   useEffect(() => {
     dispatch(hydrateWishlist(loadWishlist()));
+    dispatch(hydrateCart(loadCart()));
   }, [dispatch]);
 
   // When page loads, restore login from localStorage
