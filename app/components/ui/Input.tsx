@@ -17,6 +17,8 @@ type InputProps = {
   variant?: keyof typeof inputStyles;
   btnAction?: () => void;
   onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  maxLength?: number;
+  required?: boolean;
 };
 
 const inputStyles = {
@@ -37,6 +39,8 @@ const Input = ({
   variant,
   btnAction,
   onChange,
+  maxLength,
+  required,
 }: InputProps) => {
   return (
     <div className="relative w-full">
@@ -49,6 +53,8 @@ const Input = ({
         className={cn(variant && inputStyles[variant], className, inputClassName)}
         value={value}
         onChange={onChange}
+        maxLength={maxLength}
+        required={required}
       />
       {inlineButton && (
         <Button

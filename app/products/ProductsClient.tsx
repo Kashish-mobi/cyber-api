@@ -145,7 +145,7 @@ export default function ProductsClient({
 
           {/* Products */}
           <div className="w-full flex-1 flex flex-col lg:gap-[24px] gap-[20px]">
-            <div className="flex h-auto w-full flex-row items-center gap-[12px] lg:h-[40px]">
+            <div className="flex h-auto w-full flex-row items-center gap-[12px] lg:h-[40px] md:justify-between">
               <Paragraph
                 as="span"
                 type="nav"

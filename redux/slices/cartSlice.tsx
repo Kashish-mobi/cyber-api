@@ -15,6 +15,7 @@ type CartState = {
 };
 
 const STORAGE_KEY = "cart";
+const DETAILS_KEY = "checkoutDetails";
 
 export function loadCart(): CartItem[] {
   const raw = localStorage.getItem(STORAGE_KEY);
@@ -25,6 +26,20 @@ export function loadCart(): CartItem[] {
     return JSON.parse(raw) as CartItem[];
   } catch {
     return [];
+  }
+}
+
+export function loadCheckoutDetails() {
+  const raw = localStorage.getItem(DETAILS_KEY);
+  if (!raw) return { discountCode: "", bonusCardNumber: "" };
+
+  try {
+    return JSON.parse(raw) as {
+      discountCode: string;
+      bonusCardNumber: string;
+    };
+  } catch {
+    return { discountCode: "", bonusCardNumber: "" };
   }
 }
 
@@ -133,11 +148,30 @@ const cartSlice = createSlice({
     ) => {
       state.discountCode = action.payload.discountCode;
       state.bonusCardNumber = action.payload.bonusCardNumber;
+      localStorage.setItem(
+        DETAILS_KEY,
+        JSON.stringify({
+          discountCode: state.discountCode,
+          bonusCardNumber: state.bonusCardNumber,
+        })
+      );
+    },
+
+    hydrateCheckoutDetails: (
+      state,
+      action: PayloadAction<{
+        discountCode: string;
+        bonusCardNumber: string;
+      }>
+    ) => {
+      state.discountCode = action.payload.discountCode;
+      state.bonusCardNumber = action.payload.bonusCardNumber;
     },
 
     clearCheckoutDetails: (state) => {
       state.discountCode = "";
       state.bonusCardNumber = "";
+      localStorage.removeItem(DETAILS_KEY);
     },
 
     clearCart: (state) => {
@@ -153,6 +187,7 @@ const cartSlice = createSlice({
 
 export const {
   hydrateCart,
+  hydrateCheckoutDetails,
   addToCart,
   removeFromCart,
   updateCartQuantity,

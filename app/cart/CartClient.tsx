@@ -200,6 +200,7 @@ export default function CartClient() {
                   inlineButton={true}
                   buttonText="Apply"
                   btnAction={() => {}}
+                  maxLength={16}
                 />
 
                 {errors.bonusCardNumber && (
