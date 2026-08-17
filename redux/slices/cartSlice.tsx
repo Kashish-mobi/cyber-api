@@ -29,7 +29,7 @@ export function loadCart(): CartItem[] {
   }
 }
 
-export function loadCheckoutDetails() {
+export function loadCodes() {
   const raw = localStorage.getItem(DETAILS_KEY);
   if (!raw) return { discountCode: "", bonusCardNumber: "" };
 
@@ -55,10 +55,7 @@ const cartSlice = createSlice({
   initialState,
 
   reducers: {
-    hydrateCart: (
-      state,
-      action: PayloadAction<CartItem[]>
-    ) => {
+    setCart: (state, action: PayloadAction<CartItem[]>) => {
       state.cart = action.payload;
     },
 
@@ -139,7 +136,7 @@ const cartSlice = createSlice({
       state.bonusCardNumber = action.payload;
     },
 
-    setCheckoutDetails: (
+    saveCodes: (
       state,
       action: PayloadAction<{
         discountCode: string;
@@ -157,7 +154,7 @@ const cartSlice = createSlice({
       );
     },
 
-    hydrateCheckoutDetails: (
+    setCodes: (
       state,
       action: PayloadAction<{
         discountCode: string;
@@ -168,7 +165,7 @@ const cartSlice = createSlice({
       state.bonusCardNumber = action.payload.bonusCardNumber;
     },
 
-    clearCheckoutDetails: (state) => {
+    clearCodes: (state) => {
       state.discountCode = "";
       state.bonusCardNumber = "";
       localStorage.removeItem(DETAILS_KEY);
@@ -186,15 +183,15 @@ const cartSlice = createSlice({
 });
 
 export const {
-  hydrateCart,
-  hydrateCheckoutDetails,
+  setCart,
+  setCodes,
   addToCart,
   removeFromCart,
   updateCartQuantity,
   setDiscountCode,
   setBonusCardNumber,
-  setCheckoutDetails,
-  clearCheckoutDetails,
+  saveCodes,
+  clearCodes,
   clearCart,
 } = cartSlice.actions;
 

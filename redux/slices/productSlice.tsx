@@ -1,9 +1,11 @@
-import { GetData } from "@/api/api";
-import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import { getData } from "@/api/api";
+import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import {
-  applyProductFilters,
-  initialFilterState,
-  type FilterState,
+  defaultFilters,
+  filterProducts,
+  filtersToString,
+  PAGE_SIZE,
+  type Filters,
 } from "./filterSlice";
 
 type Product = {
@@ -51,10 +53,10 @@ type ProductState = {
   categories: string[];
   totalProducts: number;
   product: Product | null;
-
+  filter: string;
   currentPage: number;
   limit: number;
-
+  filtered: boolean;
   loading: boolean;
   error: string | null;
 };
@@ -69,17 +71,17 @@ function getSortQuery(sortBy: string) {
 export const getCategories = createAsyncThunk(
   "products/getCategories",
   async () => {
-    const response = await GetData("/products/category-list");
+    const response = await getData("/products/category-list");
     return response;
   }
 );
 
 export const getProducts = createAsyncThunk(
   "products/getProducts",
-  async (args?: Partial<FilterState> & { limit?: number }) => {
-    const filters: FilterState = { ...initialFilterState, ...args };
+  async (args?: Partial<Filters> & { limit?: number }) => {
+    const filters: Filters = { ...defaultFilters, ...args };
     const page = filters.page;
-    const limit = args?.limit ?? 12;
+    const limit = args?.limit ?? PAGE_SIZE;
     const skip = (page - 1) * limit;
     const query = `limit=0&${getSortQuery(filters.sortBy)}`;
 
@@ -88,57 +90,53 @@ export const getProducts = createAsyncThunk(
         ? `/products?${query}`
         : `/products/category/${encodeURIComponent(filters.category)}?${query}`;
 
-    const response = await GetData(endpoint);
-    const filtered = applyProductFilters(
+    const response = await getData(endpoint);
+    const list = filterProducts(
       (response.products || []) as Product[],
       filters
     );
 
     return {
-      products: filtered.slice(skip, skip + limit),
-      total: filtered.length,
+      products: list.slice(skip, skip + limit),
+      total: list.length,
       page,
       limit,
       sortBy: filters.sortBy,
+      filter: filtersToString(filters),
     };
   }
 );
 
 export const searchProducts = createAsyncThunk(
   "products/searchProducts",
-  async (
-    args: Partial<FilterState> & { searchTerm?: string; limit?: number }
-  ) => {
-    const filters: FilterState = {
-      ...initialFilterState,
-      ...args,
-      q: args.searchTerm || args.q || "",
-    };
+  async (args: Partial<Filters> & { limit?: number }) => {
+    const filters: Filters = { ...defaultFilters, ...args };
     const page = filters.page;
-    const limit = args.limit ?? 12;
+    const limit = args.limit ?? PAGE_SIZE;
     const skip = (page - 1) * limit;
     const query = `q=${encodeURIComponent(filters.q)}&limit=0&${getSortQuery(filters.sortBy)}`;
 
-    const response = await GetData(`/products/search?${query}`);
-    const filtered = applyProductFilters(
+    const response = await getData(`/products/search?${query}`);
+    const list = filterProducts(
       (response.products || []) as Product[],
       filters
     );
 
     return {
-      products: filtered.slice(skip, skip + limit),
-      total: filtered.length,
+      products: list.slice(skip, skip + limit),
+      total: list.length,
       page,
       limit,
       sortBy: filters.sortBy,
+      filter: filtersToString(filters),
     };
   }
 );
 
-export const getProductsById = createAsyncThunk(
-  "products/getProductsById",
+export const getProduct = createAsyncThunk(
+  "products/getProduct",
   async (id: number) => {
-    const response = await GetData(`/products/${id}`);
+    const response = await getData(`/products/${id}`);
     return response;
   }
 );
@@ -148,10 +146,10 @@ const initialState: ProductState = {
   categories: [],
   totalProducts: 0,
   product: null,
-
+  filter: "",
   currentPage: 1,
-  limit: 12,
-
+  limit: PAGE_SIZE,
+  filtered: false,
   loading: false,
   error: null,
 };
@@ -159,10 +157,14 @@ const initialState: ProductState = {
 const productSlice = createSlice({
   name: "products",
   initialState,
-  reducers: {},
+  reducers: {
+    setFiltered: (state, action: PayloadAction<boolean>) => {
+      state.filtered = action.payload;
+    },
+  },
   extraReducers: (builder) => {
     builder.addCase(getCategories.fulfilled, (state, action) => {
-      state.categories = action.payload || [];
+      state.categories = Array.isArray(action.payload) ? action.payload : [];
     });
     builder.addCase(getProducts.pending, (state) => {
       state.loading = true;
@@ -175,6 +177,7 @@ const productSlice = createSlice({
       state.totalProducts = action.payload.total;
       state.currentPage = action.payload.page;
       state.limit = action.payload.limit;
+      state.filter = action.payload.filter;
     });
 
     builder.addCase(getProducts.rejected, (state, action) => {
@@ -191,24 +194,27 @@ const productSlice = createSlice({
       state.totalProducts = action.payload.total;
       state.currentPage = action.payload.page;
       state.limit = action.payload.limit;
+      state.filter = action.payload.filter;
     });
     builder.addCase(searchProducts.rejected, (state, action) => {
       state.loading = false;
       state.error = action.error.message || "Something went wrong";
     });
-    builder.addCase(getProductsById.pending, (state) => {
+    builder.addCase(getProduct.pending, (state) => {
       state.loading = true;
       state.error = null;
     });
-    builder.addCase(getProductsById.fulfilled, (state, action) => {
+    builder.addCase(getProduct.fulfilled, (state, action) => {
       state.loading = false;
       state.product = action.payload;
     });
-    builder.addCase(getProductsById.rejected, (state, action) => {
+    builder.addCase(getProduct.rejected, (state, action) => {
       state.loading = false;
       state.error = action.error.message || "Something went wrong";
     });
   },
 });
+
+export const { setFiltered } = productSlice.actions;
 
 export default productSlice.reducer;

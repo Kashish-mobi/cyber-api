@@ -4,8 +4,9 @@ export const DEFAULT_CATEGORY = "smartphones";
 export const DEFAULT_SORT = "rating-desc";
 export const MIN_PRICE = 0;
 export const MAX_PRICE = 5000;
+export const PAGE_SIZE = 12;
 
-export type FilterState = {
+export type Filters = {
   q: string;
   category: string;
   page: number;
@@ -18,7 +19,7 @@ export type FilterState = {
   discount: number | null;
 };
 
-export const initialFilterState: FilterState = {
+export const defaultFilters: Filters = {
   q: "",
   category: DEFAULT_CATEGORY,
   page: 1,
@@ -31,7 +32,7 @@ export const initialFilterState: FilterState = {
   discount: null,
 };
 
-type FilterableProduct = {
+type Product = {
   price: number;
   brand?: string;
   rating?: number;
@@ -39,75 +40,84 @@ type FilterableProduct = {
   discountPercentage?: number;
 };
 
-export function parseFilters(values: {
-  q?: string;
-  category?: string;
-  page?: string;
-  sortBy?: string;
-  minPrice?: string;
-  maxPrice?: string;
-  brand?: string;
-  rating?: string;
-  availability?: string;
-  discount?: string;
-}): FilterState {
-  const page = Number(values.page);
+// Turn filters into one string for the URL:
+// category=laptops,brand=Apple,brand=Samsung,rating=4
+export function filtersToString(filter: Filters) {
+  const parts: string[] = [];
 
-  return {
-    q: values.q?.trim() || "",
-    category: values.category || DEFAULT_CATEGORY,
-    page: page > 0 ? page : 1,
-    sortBy: values.sortBy || DEFAULT_SORT,
-    minPrice: values.minPrice ? Number(values.minPrice) : null,
-    maxPrice: values.maxPrice ? Number(values.maxPrice) : null,
-    brand: values.brand || "",
-    rating: values.rating ? Number(values.rating) : null,
-    availability: values.availability || "",
-    discount: values.discount ? Number(values.discount) : null,
-  };
+  if (filter.q) parts.push(`q=${encodeURIComponent(filter.q)}`);
+  if (filter.category === "all" || filter.category !== DEFAULT_CATEGORY) {
+    parts.push(`category=${filter.category}`);
+  }
+  if (filter.sortBy && filter.sortBy !== DEFAULT_SORT) {
+    parts.push(`sortBy=${filter.sortBy}`);
+  }
+  if (filter.page > 1) parts.push(`page=${filter.page}`);
+  if (filter.minPrice !== null) parts.push(`minPrice=${filter.minPrice}`);
+  if (filter.maxPrice !== null) parts.push(`maxPrice=${filter.maxPrice}`);
+  filter.brand
+    .split(",")
+    .filter(Boolean)
+    .forEach((brand) => parts.push(`brand=${encodeURIComponent(brand)}`));
+  if (filter.rating !== null) parts.push(`rating=${filter.rating}`);
+  if (filter.availability) parts.push(`availability=${filter.availability}`);
+  if (filter.discount !== null) parts.push(`discount=${filter.discount}`);
+
+  return parts.join(",");
 }
 
-export function parseFiltersFromSearchParams(searchParams: {
-  get: (key: string) => string | null;
-}): FilterState {
-  return parseFilters({
-    q: searchParams.get("q") || undefined,
-    category: searchParams.get("category") || undefined,
-    page: searchParams.get("page") || undefined,
-    sortBy: searchParams.get("sortBy") || undefined,
-    minPrice: searchParams.get("minPrice") || undefined,
-    maxPrice: searchParams.get("maxPrice") || undefined,
-    brand: searchParams.get("brand") || undefined,
-    rating: searchParams.get("rating") || undefined,
-    availability: searchParams.get("availability") || undefined,
-    discount: searchParams.get("discount") || undefined,
+export function stringToFilters(value?: string | null): Filters {
+  const filter: Filters = { ...defaultFilters };
+  if (!value) return filter;
+
+  value.split(",").forEach((part) => {
+    const eq = part.indexOf("=");
+    if (eq < 1) return;
+
+    const key = part.slice(0, eq);
+    const raw = decodeURIComponent(part.slice(eq + 1));
+
+    if (key === "q") filter.q = raw;
+    if (key === "category") filter.category = raw;
+    if (key === "sortBy") filter.sortBy = raw;
+    if (key === "page") {
+      const page = Number(raw);
+      filter.page = page > 0 ? page : 1;
+    }
+    if (key === "minPrice") {
+      const amount = Number(raw);
+      filter.minPrice = Number.isNaN(amount) ? null : amount;
+    }
+    if (key === "maxPrice") {
+      const amount = Number(raw);
+      filter.maxPrice = Number.isNaN(amount) ? null : amount;
+    }
+    if (key === "brand") {
+      filter.brand = filter.brand ? `${filter.brand},${raw}` : raw;
+    }
+    if (key === "rating") {
+      const amount = Number(raw);
+      filter.rating = Number.isNaN(amount) ? null : amount;
+    }
+    if (key === "availability") filter.availability = raw;
+    if (key === "discount") {
+      const amount = Number(raw);
+      filter.discount = Number.isNaN(amount) ? null : amount;
+    }
   });
+
+  return filter;
 }
 
-export function filtersToQuery(filters: FilterState) {
-  const params = new URLSearchParams();
-
-  if (filters.q) params.set("q", filters.q);
-  if (filters.category === "all" || filters.category !== DEFAULT_CATEGORY) {
-    params.set("category", filters.category);
-  }
-  if (filters.sortBy && filters.sortBy !== DEFAULT_SORT) {
-    params.set("sortBy", filters.sortBy);
-  }
-  if (filters.page > 1) params.set("page", String(filters.page));
-  if (filters.minPrice !== null) params.set("minPrice", String(filters.minPrice));
-  if (filters.maxPrice !== null) params.set("maxPrice", String(filters.maxPrice));
-  if (filters.brand) params.set("brand", filters.brand);
-  if (filters.rating !== null) params.set("rating", String(filters.rating));
-  if (filters.availability) params.set("availability", filters.availability);
-  if (filters.discount !== null) params.set("discount", String(filters.discount));
-
-  return params.toString();
+export function filtersToUrl(filter: Filters) {
+  const value = filtersToString(filter);
+  if (!value) return "";
+  return `filter=${encodeURIComponent(value)}`;
 }
 
-export function applyProductFilters<T extends FilterableProduct>(
+export function filterProducts<T extends Product>(
   products: T[],
-  filters: FilterState
+  filters: Filters
 ): T[] {
   let result = products;
 
@@ -141,17 +151,17 @@ export function applyProductFilters<T extends FilterableProduct>(
   return result;
 }
 
-export type FilterChip = {
+export type Chip = {
   key: string;
   label: string;
   value?: string;
 };
 
-export function withFilterRemoved(
-  filters: FilterState,
+export function removeFilter(
+  filters: Filters,
   key: string,
   value?: string
-): FilterState {
+): Filters {
   const next = { ...filters, page: 1 };
 
   if (key === "category") next.category = "all";
@@ -173,8 +183,8 @@ export function withFilterRemoved(
   return next;
 }
 
-export function getFilterChips(filters: FilterState): FilterChip[] {
-  const chips: FilterChip[] = [];
+export function getChips(filters: Filters): Chip[] {
+  const chips: Chip[] = [];
 
   if (filters.category !== "all") {
     chips.push({
@@ -217,100 +227,18 @@ export function getFilterChips(filters: FilterState): FilterChip[] {
   return chips;
 }
 
-function resetPage(state: FilterState, next: Partial<FilterState>) {
-  Object.assign(state, next);
-  if (next.page === undefined) state.page = 1;
-}
-
 const filterSlice = createSlice({
   name: "filters",
-  initialState: initialFilterState,
+  initialState: {
+    filter: defaultFilters,
+  },
   reducers: {
-    setFilters: (_state, action: PayloadAction<FilterState>) => {
-      return action.payload;
-    },
-    updateFilters: (state, action: PayloadAction<Partial<FilterState>>) => {
-      resetPage(state, action.payload);
-    },
-    setCategory: (state, action: PayloadAction<string>) => {
-      state.category = action.payload;
-      state.q = "";
-      state.page = 1;
-    },
-    setPrice: (
-      state,
-      action: PayloadAction<{ minPrice: number; maxPrice: number }>
-    ) => {
-      const { minPrice, maxPrice } = action.payload;
-      state.minPrice = minPrice <= MIN_PRICE ? null : minPrice;
-      state.maxPrice = maxPrice >= MAX_PRICE ? null : maxPrice;
-      state.page = 1;
-    },
-    setOptionFilter: (
-      state,
-      action: PayloadAction<{
-        key: "brand" | "rating" | "availability" | "discount";
-        value: string;
-        checked: boolean;
-        multiple: boolean;
-      }>
-    ) => {
-      const { key, value, checked, multiple } = action.payload;
-
-      if (key === "brand") {
-        const selected = state.brand.split(",").filter(Boolean);
-        const next = checked
-          ? [...selected, value]
-          : selected.filter((item) => item !== value);
-        state.brand = next.join(",");
-      } else if (key === "rating") {
-        state.rating = checked ? Number(value) : null;
-      } else if (key === "availability") {
-        state.availability = checked ? value : "";
-      } else if (key === "discount") {
-        state.discount = checked ? Number(value) : null;
-      }
-
-      if (!multiple && !checked && key !== "brand") {
-        // already cleared above
-      }
-
-      state.page = 1;
-    },
-    removeFilter: (
-      state,
-      action: PayloadAction<{ key: string; value?: string }>
-    ) => {
-      const { key, value } = action.payload;
-
-      if (key === "category") state.category = "all";
-      if (key === "q") state.q = "";
-      if (key === "price") {
-        state.minPrice = null;
-        state.maxPrice = null;
-      }
-      if (key === "brand") {
-        const next = state.brand
-          .split(",")
-          .filter((item) => item && item !== value);
-        state.brand = next.join(",");
-      }
-      if (key === "rating") state.rating = null;
-      if (key === "availability") state.availability = "";
-      if (key === "discount") state.discount = null;
-
-      state.page = 1;
+    setFilters: (state, action: PayloadAction<Filters>) => {
+      state.filter = action.payload;
     },
   },
 });
 
-export const {
-  setFilters,
-  updateFilters,
-  setCategory,
-  setPrice,
-  setOptionFilter,
-  removeFilter,
-} = filterSlice.actions;
+export const { setFilters } = filterSlice.actions;
 
 export default filterSlice.reducer;

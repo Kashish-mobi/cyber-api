@@ -13,7 +13,7 @@ import CheckBox from "@/app/components/ui/CheckBox";
 import CreditCardPreview from "@/app/components/ui/CreditCardPreview";
 import AddressModal from "@/app/components/AddressModal";
 import ConfirmBox from "@/app/components/ui/ConfirmBox";
-import { useAppDispatch, useAppSelector } from "@/redux/hooks";
+import { useDispatch, useSelector } from "@/redux/hooks";
 import {
   addAddress,
   deleteAddress,
@@ -24,7 +24,7 @@ import {
   updateAddress,
   type Address as AddressType,
 } from "@/redux/slices/checkoutSlice";
-import { clearCart, clearCheckoutDetails } from "@/redux/slices/cartSlice";
+import { clearCart, clearCodes } from "@/redux/slices/cartSlice";
 import { useRouter } from "nextjs-toploader/app";
 
 const paymentTabs = [
@@ -80,15 +80,15 @@ function TypeStripe({ type }: { type: string }) {
 }
 
 export default function CheckoutPage() {
-  const dispatch = useAppDispatch();
+  const dispatch = useDispatch();
   const router = useRouter();
-  const cart = useAppSelector((state) => state.cart.cart);
+  const cart = useSelector((state) => state.cart.cart);
   const {
     addresses,
     selectedAddressId,
     shippingMethodId,
     shippingDate,
-  } = useAppSelector((state) => state.checkout);
+  } = useSelector((state) => state.checkout);
 
   const [hasMounted, setHasMounted] = useState(false);
   const [step, setStep] = useState(1);
@@ -139,7 +139,7 @@ export default function CheckoutPage() {
 
   const handlePay = () => {
     dispatch(clearCart());
-    dispatch(clearCheckoutDetails());
+    dispatch(clearCodes());
     setThankYou(true);
   };
 

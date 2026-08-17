@@ -2,27 +2,27 @@
 
 import { useEffect } from "react";
 import { Provider } from "react-redux";
-import { useAppDispatch, useAppSelector } from "./hooks";
+import { useDispatch, useSelector } from "./hooks";
 import {
   clearLogin,
   loadLogin,
   logout,
   restoreLogin,
 } from "./slices/userSlice";
-import { hydrateWishlist, loadWishlist } from "./slices/wishlistSlice";
-import { hydrateCart, hydrateCheckoutDetails, loadCart, loadCheckoutDetails } from "./slices/cartSlice";
-import { hydrateCheckout, loadAddresses } from "./slices/checkoutSlice";
+import { setWishlist, loadWishlist } from "./slices/wishlistSlice";
+import { setCart, setCodes, loadCart, loadCodes } from "./slices/cartSlice";
+import { setAddresses, loadAddresses } from "./slices/checkoutSlice";
 import { store } from "./store";
 
-function LoginSession() {
-  const dispatch = useAppDispatch();
-  const { isAuthenticated, expiresAt } = useAppSelector((state) => state.user);
+function LoadSavedData() {
+  const dispatch = useDispatch();
+  const { isAuthenticated, expiresAt } = useSelector((state) => state.user);
 
   useEffect(() => {
-    dispatch(hydrateWishlist(loadWishlist()));
-    dispatch(hydrateCart(loadCart()));
-    dispatch(hydrateCheckoutDetails(loadCheckoutDetails()));
-    dispatch(hydrateCheckout({ addresses: loadAddresses() }));
+    dispatch(setWishlist(loadWishlist()));
+    dispatch(setCart(loadCart()));
+    dispatch(setCodes(loadCodes()));
+    dispatch(setAddresses(loadAddresses()));
   }, [dispatch]);
 
   // When page loads, restore login from localStorage
@@ -68,7 +68,7 @@ type ReduxProviderProps = {
 export default function ReduxProvider({ children }: ReduxProviderProps) {
   return (
     <Provider store={store}>
-      <LoginSession />
+      <LoadSavedData />
       {children}
     </Provider>
   );

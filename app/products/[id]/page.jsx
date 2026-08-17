@@ -7,7 +7,7 @@ import AppImage from "@/app/components/ui/Image";
 
 import { store } from "@/redux/store";
 import {
-  getProductsById,
+  getProduct,
   getProducts,
 } from "@/redux/slices/productSlice";
 
@@ -23,7 +23,7 @@ export default async function ProductPage({
   // =========================================
 
   const [result, result2] = await Promise.all([
-    store.dispatch(getProductsById(Number(id))),
+    store.dispatch(getProduct(Number(id))),
     store.dispatch(getProducts({ page: 1, limit: 12 })),
   ]);
 
@@ -31,7 +31,7 @@ export default async function ProductPage({
   // 2. Handle API product error
   // =========================================
 
-  if (getProductsById.rejected.match(result)) {
+  if (getProduct.rejected.match(result)) {
     return (
       <div className="flex justify-center items-center">
         <AppImage

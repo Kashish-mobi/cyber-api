@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { BreadCrumbs as BreadCrumbsIcon } from "../icons";
-import { UpperCaseFirstLetter } from "@/lib/helper";
+import { capitalize } from "@/lib/helper";
 
 export type BreadCrumbsProps = {
   items: {
@@ -16,7 +16,7 @@ export default function BreadCrumbs({ items }: BreadCrumbsProps) {
         const isLast = index === items.length - 1;
         const content = (
           <>
-            {UpperCaseFirstLetter(item.label)} {!isLast && <BreadCrumbsIcon />}
+            {capitalize(item.label)} {!isLast && <BreadCrumbsIcon />}
           </>
         );
 
@@ -26,7 +26,7 @@ export default function BreadCrumbs({ items }: BreadCrumbsProps) {
               key={`${item.label}-${index}`}
               className={`flex items-center gap-[16px] tracking-[0.1px] ${isLast ? "text-primary" : "text-muted"}`}
             >
-              {UpperCaseFirstLetter(item.label)}
+              {capitalize(item.label)}
             </span>
           );
         }

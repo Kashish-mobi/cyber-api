@@ -1,9 +1,9 @@
 "use client";
 
-import { useAppSelector } from "@/redux/hooks";
+import { useSelector } from "@/redux/hooks";
 
 export default function GlobalLoader() {
-  const isLoading = useAppSelector(
+  const isLoading = useSelector(
     (state) => state.loader.isLoading
   );
 

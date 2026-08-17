@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import Heading from "../components/ui/Heading";
 import ProductCard from "../components/ui/ProductCard";
 import AppImage from "../components/ui/Image";
-import { useAppSelector } from "@/redux/hooks";
+import { useSelector } from "@/redux/hooks";
 
 type Product = {
   id: number;
@@ -15,11 +15,11 @@ type Product = {
 };
 
 export default function WishlistClient() {
-  const wishlist = useAppSelector(
+  const wishlist = useSelector(
     (state) => state.wishlist.wishlist
   );
-  const isInitialized = useAppSelector(
-    (state) => state.wishlist.isInitialized
+  const ready = useSelector(
+    (state) => state.wishlist.ready
   );
 
   const [products, setProducts] = useState<Product[]>([]);
@@ -73,7 +73,7 @@ export default function WishlistClient() {
 
       {loading && <p>Loading wishlist...</p>}
 
-      {!loading && products.length === 0 && isInitialized && (
+      {!loading && products.length === 0 && ready && (
         <div className="flex flex-col justify-center items-center">
         <AppImage 
           src="/website/no-products.avif"

@@ -20,7 +20,7 @@ import {
   Wishlist,
 } from "@/app/icons";
 import { cn } from "@/lib/cn";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch, useSelector } from "@/redux/hooks";
 import { useRouter } from "nextjs-toploader/app";
 
 const iconMap = {

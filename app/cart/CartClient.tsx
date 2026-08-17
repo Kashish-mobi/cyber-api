@@ -8,16 +8,16 @@ import Paragraph from "../components/ui/Paragraph";
 import CartStrip from "../components/CartStrip";
 import AppImage from "../components/ui/Image";
 
-import { useAppDispatch, useAppSelector } from "@/redux/hooks";
-import { setCheckoutDetails } from "@/redux/slices/cartSlice";
+import { useDispatch, useSelector } from "@/redux/hooks";
+import { saveCodes } from "@/redux/slices/cartSlice";
 
 import { useRouter } from "nextjs-toploader/app";
 
 export default function CartClient() {
-  const dispatch = useAppDispatch();
+  const dispatch = useDispatch();
   const router = useRouter();
 
-  const products = useAppSelector((state) => state.cart.cart);
+  const products = useSelector((state) => state.cart.cart);
 
   const [discountCode, setDiscountCode] = useState("");
   const [bonusCardNumber, setBonusCardNumber] = useState("");
@@ -69,7 +69,7 @@ export default function CartClient() {
     }
 
     dispatch(
-      setCheckoutDetails({
+      saveCodes({
         discountCode: discountCode.trim(),
         bonusCardNumber: bonusCardNumber.trim(),
       })
@@ -199,7 +199,7 @@ export default function CartClient() {
                   }}
                   inlineButton={true}
                   buttonText="Apply"
-                  btnAction={() => {}}
+                  onButton={() => {}}
                   maxLength={16}
                 />
 

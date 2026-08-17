@@ -74,13 +74,8 @@ const checkoutSlice = createSlice({
   name: "checkout",
   initialState,
   reducers: {
-    hydrateCheckout: (
-      state,
-      action: PayloadAction<{
-        addresses: Address[];
-      }>
-    ) => {
-      state.addresses = action.payload.addresses;
+    setAddresses: (state, action: PayloadAction<Address[]>) => {
+      state.addresses = action.payload;
       if (
         !state.addresses.find((item) => item.id === state.selectedAddressId)
       ) {
@@ -122,7 +117,7 @@ const checkoutSlice = createSlice({
 });
 
 export const {
-  hydrateCheckout,
+  setAddresses,
   selectAddress,
   addAddress,
   updateAddress,

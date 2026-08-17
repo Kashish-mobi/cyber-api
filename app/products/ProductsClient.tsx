@@ -12,8 +12,10 @@ import { FilterIcon, Cross } from "@/app/icons";
 import AppImage from "@/app/components/ui/Image";
 import { hideLoader } from "@/redux/loaderSlice";
 import { store } from "@/redux/store";
-import { useProductFilters } from "@/redux/useProductFilters";
-import { getFilterChips } from "@/redux/slices/filterSlice";
+import { useDispatch, useSelector } from "@/redux/hooks";
+import { getChips, setFilters } from "@/redux/slices/filterSlice";
+import { setFiltered } from "@/redux/slices/productSlice";
+import { getFiltersFromUrl, loadProducts, useFilters } from "@/redux/useFilters";
 
 const SORT_LABELS: Record<string, string> = {
   "rating-desc": "By rating : High to Low",
@@ -92,20 +94,43 @@ export default function ProductsClient({
   categories?: string[];
 }) {
   const [filterMenuOpen, setFilterMenuOpen] = useState(false);
-  const { filters, applyFilters, removeChip } = useProductFilters();
+  const dispatch = useDispatch();
+  const { filters, applyFilters, removeChip, filterText } = useFilters();
+  const filtered = useSelector((state) => state.products.filtered);
+  const clientProducts = useSelector((state) => state.products.products);
+  const clientTotal = useSelector((state) => state.products.totalProducts);
+  const clientPage = useSelector((state) => state.products.currentPage);
+
+  const list = filtered ? clientProducts : products;
+  const total = filtered ? clientTotal : totalProducts;
+  const page = filtered ? clientPage : currentPage;
   const category = filters.category;
   const query = filters.q;
   const sortBy = filters.sortBy;
-  const totalPages = Math.max(1, Math.ceil(totalProducts / limit));
-  const chips = getFilterChips(filters);
+  const totalPages = Math.max(1, Math.ceil(total / limit));
+  const chips = getChips(filters);
+
+  useEffect(() => {
+    dispatch(setFiltered(false));
+    dispatch(setFilters(getFiltersFromUrl()));
+
+    const onBackOrForward = () => {
+      const nextFilters = getFiltersFromUrl();
+      dispatch(setFilters(nextFilters));
+      loadProducts(dispatch, nextFilters);
+    };
+
+    window.addEventListener("popstate", onBackOrForward);
+    return () => window.removeEventListener("popstate", onBackOrForward);
+  }, [dispatch]);
 
   useEffect(() => {
     store.dispatch(hideLoader());
-  }, [currentPage, products]);
+  }, [page, list]);
 
-  const goToPage = (page: number) => {
-    if (page < 1 || page > totalPages || page === currentPage) return;
-    applyFilters({ page });
+  const goToPage = (nextPage: number) => {
+    if (nextPage < 1 || nextPage > totalPages || nextPage === page) return;
+    applyFilters({ page: nextPage });
   };
 
   const goToSort = (option: string) => {
@@ -121,7 +146,7 @@ export default function ProductsClient({
     { label: "Catalog", href: "/products" },
     {
       label: category === "all" ? query || "Products" : category || query || "Products",
-      href: `/products${category && category !== "all" ? `?category=${category}` : query ? `?q=${query}` : ""}`,
+      href: `/products${filterText ? `?filter=${encodeURIComponent(filterText)}` : ""}`,
     },
   ]}
 />
@@ -139,7 +164,7 @@ export default function ProductsClient({
           </div>
           <FilterSectionMobile
             isOpen={filterMenuOpen}
-            onCloseAction={() => setFilterMenuOpen(false)}
+            onClose={() => setFilterMenuOpen(false)}
             categories={categories}
           />
 
@@ -153,7 +178,7 @@ export default function ProductsClient({
               >
                 Selected Products:{" "}
                 <span className="text-primary text-[20px] font-[600] leading-[24px] tracking-[0.5px]">
-                  {totalProducts}
+                  {total}
                 </span>
               </Paragraph>
               <Button
@@ -191,12 +216,12 @@ export default function ProductsClient({
               >
                 Product Result:{" "}
                 <span className="text-primary text-[20px] font-[600] leading-[24px]">
-                  {totalProducts}
+                  {total}
                 </span>
               </Paragraph>
             </div>
             <div className="grid gap-x-[16px] lg:gap-y-[26px] gap-y-[16px] grid-cols-2 xl:grid-cols-3 lg:pb-[18px] pb-[22px]">
-              {products?.length > 0 ? products.map((item: Product) => (
+              {list?.length > 0 ? list.map((item: Product) => (
                 <ProductCard
                   key={item.id}
                   id={item.id}
@@ -211,14 +236,14 @@ export default function ProductsClient({
               }
 
             </div>
-            {products?.length <=0 && (
+            {list?.length <=0 && (
             <div className="flex justify-center items-center h-full">
                 <AppImage src="/website/no-products.avif" alt="No products found" width={500} height={500} className="w-full h-full max-w-[500px] max-h-[500px]" />
               </div>
             )}
             <Pagination
               totalPages={totalPages}
-              currentPage={currentPage}
+              currentPage={page}
               onPageChange={goToPage}
             />
           </div>

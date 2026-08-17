@@ -2,15 +2,14 @@
 import { Search, Cross } from "@/app/icons";
 import { cn } from "@/lib/cn";
 import { useEffect, useState } from "react";
-import { useSearchParams } from "next/navigation";
 import Button from "./Button";
-import { useProductFilters } from "@/redux/useProductFilters";
+import { useFilters } from "@/redux/useFilters";
 
 function SearchBox({
   placeholder,
   className,
   inputClassName,
-  enableProductSearch = false,
+  forProducts = false,
   showSearchButton = false,
   onSearch,
   onValueChange,
@@ -18,23 +17,20 @@ function SearchBox({
   placeholder: string;
   className?: string;
   inputClassName?: string;
-  enableProductSearch?: boolean;
+  forProducts?: boolean;
   showSearchButton?: boolean;
   onSearch?: () => void;
   onValueChange?: (value: string) => void;
 }) {
-  const searchParams = useSearchParams();
-  const { applyFilters } = useProductFilters();
-  const queryFromUrl = searchParams.get("q") || "";
-  const [value, setValue] = useState(
-    enableProductSearch ? queryFromUrl : ""
-  );
+  const { applyFilters, filters } = useFilters();
+  const searchValue = forProducts ? filters.q : "";
+  const [value, setValue] = useState(searchValue);
 
   useEffect(() => {
-    if (enableProductSearch) {
-      setValue(queryFromUrl);
+    if (forProducts) {
+      setValue(filters.q);
     }
-  }, [queryFromUrl, enableProductSearch]);
+  }, [filters.q, forProducts]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setValue(e.target.value);
@@ -44,14 +40,14 @@ function SearchBox({
   const handleClear = () => {
     setValue("");
     onValueChange?.("");
-    if (enableProductSearch && queryFromUrl) {
+    if (forProducts && filters.q) {
       applyFilters({ q: "" });
     }
   };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!enableProductSearch) return;
+    if (!forProducts) return;
 
     applyFilters({ q: value.trim() });
     onSearch?.();

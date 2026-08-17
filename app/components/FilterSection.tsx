@@ -9,13 +9,15 @@ import {
 import Button from "./ui/Button";
 import Heading from "./ui/Heading";
 import CheckBox from "./ui/CheckBox";
-import SearchBox from "./ui/SearchBox";
 import Paragraph from "./ui/Paragraph";
 import Input from "./ui/Input";
-import { useProductFilters } from "@/redux/useProductFilters";
+import { Search } from "../icons";
+import { useFilters } from "@/redux/useFilters";
 import { DEFAULT_CATEGORY, MAX_PRICE, MIN_PRICE } from "@/redux/slices/filterSlice";
+import { useDispatch, useSelector } from "@/redux/hooks";
+import { getCategories } from "@/redux/slices/productSlice";
 
-const DUMMY_FILTERS = [
+const extraFilters = [
   {
     key: "brand",
     label: "Brand",
@@ -57,8 +59,29 @@ function formatOption(key: string, option: string) {
   return option;
 }
 
-function PriceUI() {
-  const { filters, applyFilters } = useProductFilters();
+function FilterSearch({
+  value,
+  onChange,
+}: {
+  value: string;
+  onChange: (value: string) => void;
+}) {
+  return (
+    <div className="flex h-[40px] w-full items-center gap-2 rounded-[8px] bg-surface p-[12px]">
+      <Search />
+      <input
+        type="text"
+        placeholder="Search"
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+        className="w-full bg-transparent tracking-[-0.44px] outline-none"
+      />
+    </div>
+  );
+}
+
+function PriceFilter() {
+  const { filters, applyFilters } = useFilters();
   const urlMin = filters.minPrice ?? MIN_PRICE;
   const urlMax = filters.maxPrice ?? MAX_PRICE;
   const [minPrice, setMinPrice] = useState(urlMin);
@@ -161,7 +184,7 @@ function PriceUI() {
 }
 
 function CategoryOptions({ categories }: { categories: string[] }) {
-  const { filters, applyFilters } = useProductFilters();
+  const { filters, applyFilters } = useFilters();
   const [search, setSearch] = useState("");
 
   const isChecked = (slug: string) => {
@@ -176,12 +199,7 @@ function CategoryOptions({ categories }: { categories: string[] }) {
 
   return (
     <div className="flex flex-col gap-[16px] pt-[16px]">
-      <SearchBox
-        placeholder="Search"
-        className="!h-[40px] w-full !p-[12px]"
-        inputClassName="w-full bg-transparent tracking-[-0.44px] outline-none"
-        onValueChange={setSearch}
-      />
+      <FilterSearch value={search} onChange={setSearch} />
       <div className="flex max-h-[280px] flex-col gap-[8px] overflow-y-auto">
         {visible.map((option) => (
           <div
@@ -208,7 +226,7 @@ function CategoryOptions({ categories }: { categories: string[] }) {
   );
 }
 
-function DummyOptions({
+function FilterOptions({
   filterKey,
   options,
 }: {
@@ -216,7 +234,7 @@ function DummyOptions({
   options: string[];
   multiple: boolean;
 }) {
-  const { filters, applyFilters } = useProductFilters();
+  const { filters, applyFilters } = useFilters();
   const [search, setSearch] = useState("");
   const selected =
     filterKey === "brand"
@@ -239,12 +257,7 @@ function DummyOptions({
 
   return (
     <div className="flex flex-col gap-[16px] pt-[16px]">
-      <SearchBox
-        placeholder="Search"
-        className="!h-[40px] w-full !p-[12px]"
-        inputClassName="w-full bg-transparent tracking-[-0.44px] outline-none"
-        onValueChange={setSearch}
-      />
+      <FilterSearch value={search} onChange={setSearch} />
       <div className="flex max-h-[220px] flex-col gap-[8px] overflow-y-auto">
         {visible.map((option) => (
           <div
@@ -285,7 +298,19 @@ function DummyOptions({
   );
 }
 
-function FilterAccordion({
+function useCategories(serverCategories: string[] = []) {
+  const dispatch = useDispatch();
+  const storedCategories = useSelector((state) => state.products.categories);
+
+  useEffect(() => {
+    dispatch(getCategories());
+  }, [dispatch]);
+
+  if (serverCategories.length > 0) return serverCategories;
+  return Array.isArray(storedCategories) ? storedCategories : [];
+}
+
+function FilterList({
   categories,
   openFilters,
   onToggle,
@@ -299,7 +324,7 @@ function FilterAccordion({
   const filters = [
     { label: "Price", key: "price" },
     { label: "Category", key: "category" },
-    ...DUMMY_FILTERS.map((filter) => ({
+    ...extraFilters.map((filter) => ({
       label: filter.label,
       key: filter.key,
     })),
@@ -309,7 +334,7 @@ function FilterAccordion({
     <>
       {filters.map((filter) => {
         const isOpen = openFilters.includes(filter.label);
-        const dummy = DUMMY_FILTERS.find((item) => item.key === filter.key);
+        const extra = extraFilters.find((item) => item.key === filter.key);
 
         return (
           <div key={filter.label} className="pt-[13px]">
@@ -331,15 +356,15 @@ function FilterAccordion({
                 isOpen ? "max-h-[600px] opacity-100" : "max-h-0 opacity-0"
               }`}
             >
-              {filter.key === "price" && <PriceUI />}
+              {filter.key === "price" && <PriceFilter />}
               {filter.key === "category" && (
                 <CategoryOptions categories={categories} />
               )}
-              {dummy && (
-                <DummyOptions
-                  filterKey={dummy.key}
-                  options={dummy.options}
-                  multiple={dummy.multiple}
+              {extra && (
+                <FilterOptions
+                  filterKey={extra.key}
+                  options={extra.options}
+                  multiple={extra.multiple}
                 />
               )}
             </div>
@@ -356,11 +381,12 @@ export function FilterSectionDesktop({
   categories?: string[];
 }) {
   const [openFilter, setOpenFilter] = useState<string | null>("Category");
+  const categoryList = useCategories(categories);
 
   return (
     <div className="flex flex-col gap-[10px]">
-      <FilterAccordion
-        categories={categories}
+      <FilterList
+        categories={categoryList}
         openFilters={openFilter ? [openFilter] : []}
         onToggle={(label) =>
           setOpenFilter((prev) => (prev === label ? null : label))
@@ -372,16 +398,17 @@ export function FilterSectionDesktop({
 
 type FilterSectionMobileProps = {
   isOpen: boolean;
-  onCloseAction: () => void;
+  onClose: () => void;
   categories?: string[];
 };
 
 export function FilterSectionMobile({
   isOpen,
-  onCloseAction,
+  onClose,
   categories = [],
 }: FilterSectionMobileProps) {
   const [openFilter, setOpenFilter] = useState<string[]>(["Price"]);
+  const categoryList = useCategories(categories);
 
   useEffect(() => {
     if (isOpen) {
@@ -403,7 +430,7 @@ export function FilterSectionMobile({
             ? "pointer-events-auto opacity-100"
             : "pointer-events-none opacity-0"
         }`}
-        onClick={onCloseAction}
+        onClick={onClose}
       />
       <div
         className={`fixed right-0 top-[88px] z-[110] h-[calc(100vh-88px)] w-full max-w-full bg-secondary px-[17px] transition-transform duration-500 ease-in-out ${
@@ -413,7 +440,7 @@ export function FilterSectionMobile({
         <div className="flex items-center justify-start gap-x-[16px] py-[15.5px] pt-[31px]">
           <button
             type="button"
-            onClick={onCloseAction}
+            onClick={onClose}
             className="flex items-center justify-center"
             aria-label="Close filters"
           >
@@ -424,8 +451,8 @@ export function FilterSectionMobile({
           </Heading>
         </div>
         <div className="h-[calc(100vh-150px)] overflow-y-auto pb-[60px]">
-          <FilterAccordion
-            categories={categories}
+          <FilterList
+            categories={categoryList}
             openFilters={openFilter}
             allowClosePrice={false}
             onToggle={(label) =>

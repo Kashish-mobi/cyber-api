@@ -1,8 +1,9 @@
 import type { Metadata } from "next";
 import ProductsClient from "./ProductsClient";
 import { store } from "@/redux/store";
-import { getProducts, searchProducts, getCategories } from "@/redux/slices/productSlice";
-import { parseFilters, setFilters } from "@/redux/slices/filterSlice";
+import { getProducts, searchProducts } from "@/redux/slices/productSlice";
+import { stringToFilters, PAGE_SIZE, setFilters } from "@/redux/slices/filterSlice";
+import { getData } from "@/api/api";
 
 export const metadata: Metadata = {
   title: "Products — CyberStore",
@@ -10,26 +11,15 @@ export const metadata: Metadata = {
     "Browse our full catalog of smartphones, laptops, and accessories.",
 };
 
-const LIMIT = 12;
-
 type Props = {
   searchParams: Promise<{
-    q?: string;
-    category?: string;
-    page?: string;
-    sortBy?: string;
-    minPrice?: string;
-    maxPrice?: string;
-    brand?: string;
-    rating?: string;
-    availability?: string;
-    discount?: string;
+    filter?: string;
   }>;
 };
 
 export default async function ProductsPage({ searchParams }: Props) {
   const params = await searchParams;
-  const filters = parseFilters(params);
+  const filters = stringToFilters(params.filter);
   store.dispatch(setFilters(filters));
 
   let products: Array<{
@@ -43,17 +33,18 @@ export default async function ProductsPage({ searchParams }: Props) {
   let totalProducts = 0;
   let categories: string[] = [];
 
-  const categoriesResult = await store.dispatch(getCategories());
-  if (getCategories.fulfilled.match(categoriesResult)) {
-    categories = categoriesResult.payload || [];
+  try {
+    const list = await getData("/products/category-list");
+    categories = Array.isArray(list) ? list : [];
+  } catch {
+    categories = [];
   }
 
   if (filters.q) {
     const result = await store.dispatch(
       searchProducts({
         ...filters,
-        searchTerm: filters.q,
-        limit: LIMIT,
+        limit: PAGE_SIZE,
       })
     );
 
@@ -65,7 +56,7 @@ export default async function ProductsPage({ searchParams }: Props) {
     const result = await store.dispatch(
       getProducts({
         ...filters,
-        limit: LIMIT,
+        limit: PAGE_SIZE,
       })
     );
 
@@ -80,7 +71,7 @@ export default async function ProductsPage({ searchParams }: Props) {
       products={products}
       totalProducts={totalProducts}
       currentPage={filters.page}
-      limit={LIMIT}
+      limit={PAGE_SIZE}
       categories={categories}
     />
   );

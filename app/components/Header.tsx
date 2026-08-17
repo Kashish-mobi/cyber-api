@@ -7,15 +7,13 @@ import { CompanyLogo, User, WishList, Cart } from "../icons";
 import { getIcon, type IconName } from "@/lib/icons";
 import Paragraph from "./ui/Paragraph";
 import SearchBox from "./ui/SearchBox";
-import { useAppDispatch } from "@/redux/hooks";
-import { useSelector } from "react-redux";
-import { RootState } from "@/redux/store";
+import { useDispatch, useSelector } from "@/redux/hooks";
 import { clearLogin, logout } from "@/redux/slices/userSlice";
 
 const { header, ui } = homepage;
 
 function UserMenu() {
-  const dispatch = useAppDispatch();
+  const dispatch = useDispatch();
   const [open, setOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
 
@@ -66,10 +64,10 @@ export default function Header() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [hasMounted, setHasMounted] = useState(false);
   const isAuthenticated = useSelector(
-    (state: RootState) => state.user.isAuthenticated
+    (state) => state.user.isAuthenticated
   );
-  const wishlist = useSelector((state: RootState) => state.wishlist.wishlist);
-  const cart = useSelector((state: RootState) => state.cart.cart);
+  const wishlist = useSelector((state) => state.wishlist.wishlist);
+  const cart = useSelector((state) => state.cart.cart);
 
   useEffect(() => {
     setHasMounted(true);
@@ -114,7 +112,7 @@ export default function Header() {
             placeholder={header.searchPlaceholder}
             className="w-full"
             inputClassName="w-full bg-transparent tracking-[-0.44px] outline-none"
-            enableProductSearch
+            forProducts
           />
         </div>
 
@@ -157,7 +155,7 @@ export default function Header() {
             placeholder={header.searchPlaceholder}
             className="w-full !h-[56px]"
             inputClassName="w-full bg-transparent tracking-[-0.44px] outline-none"
-            enableProductSearch
+            forProducts
           />
         </div>
 
@@ -250,7 +248,7 @@ export default function Header() {
             placeholder={header.searchPlaceholder}
             className="w-full !h-[52px] lg:!w-full"
             inputClassName="w-full bg-transparent text-[14px] outline-none"
-            enableProductSearch
+            forProducts
             showSearchButton
             onSearch={() => setMenuOpen(false)}
           />

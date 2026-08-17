@@ -1,9 +1,9 @@
 import { createAsyncThunk, createSlice, type PayloadAction } from "@reduxjs/toolkit";
-import { PostData } from "@/api/api";
+import { postData } from "@/api/api";
 import {
   User,
-  SignupPayload,
-  LoginPayload,
+  SignupData,
+  LoginData,
 } from "@/lib/types/user";
 
 // Login expires after 1 hour
@@ -63,8 +63,8 @@ const initialState: UserState = {
 
 export const signUp = createAsyncThunk(
   "auth/signup",
-  async (payload: SignupPayload) => {
-    const response = await PostData("/users/add", {
+  async (payload: SignupData) => {
+    const response = await postData("/users/add", {
       name: payload.name,
       email: payload.email,
       username: payload.email,
@@ -77,8 +77,8 @@ export const signUp = createAsyncThunk(
 
 export const login = createAsyncThunk(
   "auth/login",
-  async (payload: LoginPayload) => {
-    const response = await PostData("/auth/login", {
+  async (payload: LoginData) => {
+    const response = await postData("/auth/login", {
       username: payload.username,
       password: payload.password,
       expiresInMins: 60,

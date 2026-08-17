@@ -6,7 +6,7 @@ import Button from "./ui/Button";
 import Heading from "./ui/Heading";
 import Paragraph from "./ui/Paragraph";
 import AppImage from "./ui/Image";
-import { useAppDispatch } from "@/redux/hooks";
+import { useDispatch } from "@/redux/hooks";
 import { login, ONE_HOUR_MS, saveLogin, signUp } from "@/redux/slices/userSlice";
 import { useRouter } from "nextjs-toploader/app";
 
@@ -16,7 +16,7 @@ type AuthFormClientProps = {
 
 export default function AuthFormClient({ mode }: AuthFormClientProps) {
   const router = useRouter();
-  const dispatch = useAppDispatch();
+  const dispatch = useDispatch();
   const isLogin = mode === "login";
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");

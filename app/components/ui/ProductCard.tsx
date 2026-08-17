@@ -7,7 +7,7 @@ import Heading from "./Heading";
 import Paragraph from "./Paragraph";
 import { useEffect, useState } from "react";
 import { useRouter } from "nextjs-toploader/app";
-import { useAppSelector } from "@/redux/hooks";
+import { useSelector } from "@/redux/hooks";
 import { store } from "@/redux/store";
 import { addToWishlist, removeFromWishlist } from "@/redux/slices/wishlistSlice";
 import { addToCart, removeFromCart } from "@/redux/slices/cartSlice";
@@ -56,8 +56,8 @@ export default function ProductCard({
   onWishlist,
 }: ProductCardProps) {
   const [hasMounted, setHasMounted] = useState(false);
-  const wishlist = useAppSelector((state) => state.wishlist.wishlist);
-  const cart = useAppSelector((state) => state.cart.cart);
+  const wishlist = useSelector((state) => state.wishlist.wishlist);
+  const cart = useSelector((state) => state.cart.cart);
 
   useEffect(() => {
     setHasMounted(true);

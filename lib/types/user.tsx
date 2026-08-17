@@ -5,13 +5,13 @@ export type User = {
   username?: string;
 };
 
-export type SignupPayload = {
+export type SignupData = {
   name: string;
   email: string;
   password: string;
 };
 
-export type LoginPayload = {
+export type LoginData = {
   username: string;
   password: string;
 };

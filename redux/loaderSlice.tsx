@@ -8,7 +8,7 @@ const initialState: LoaderState = {
   isLoading: false,
 };
 
-function isProductListAction(type: string) {
+function isProductFetch(type: string) {
   return (
     type.startsWith("products/getProducts/") ||
     type.startsWith("products/searchProducts/")
@@ -27,7 +27,7 @@ const loaderSlice = createSlice({
     builder
       .addMatcher(
         (action) =>
-          action.type.endsWith("/pending") && !isProductListAction(action.type),
+          action.type.endsWith("/pending") && !isProductFetch(action.type),
         (state) => {
           state.isLoading = true;
         }
@@ -36,7 +36,7 @@ const loaderSlice = createSlice({
         (action) =>
           (action.type.endsWith("/fulfilled") ||
             action.type.endsWith("/rejected")) &&
-          !isProductListAction(action.type),
+          !isProductFetch(action.type),
         (state) => {
           state.isLoading = false;
         }

@@ -15,7 +15,7 @@ type InputProps = {
   inlineButton?: boolean;
   buttonText?: string;
   variant?: keyof typeof inputStyles;
-  btnAction?: () => void;
+  onButton?: () => void;
   onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
   maxLength?: number;
   required?: boolean;
@@ -37,7 +37,7 @@ const Input = ({
   inlineButton,
   buttonText,
   variant,
-  btnAction,
+  onButton,
   onChange,
   maxLength,
   required,
@@ -61,7 +61,7 @@ const Input = ({
           variant="dark"
           text={buttonText}
           className="absolute right-[16px] top-1/2 -translate-y-1/2 !h-[32px] !min-w-[77px] !text-[12px] !leading-[16px] !px-[8px] !py-0"
-          onClick={btnAction}
+          onClick={onButton}
         />
       )}
     </div>

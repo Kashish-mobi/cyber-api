@@ -4,7 +4,7 @@ type WishlistState = {
   wishlist: number[];
   loading: boolean;
   error: string | null;
-  isInitialized: boolean;
+  ready: boolean;
 };
 
 const STORAGE_KEY = "wishlist";
@@ -24,16 +24,16 @@ const initialState: WishlistState = {
   wishlist: [],
   loading: false,
   error: null,
-  isInitialized: false,
+  ready: false,
 };
 
 const wishlistSlice = createSlice({
   name: "wishlist",
   initialState,
   reducers: {
-    hydrateWishlist: (state, action: PayloadAction<number[]>) => {
+    setWishlist: (state, action: PayloadAction<number[]>) => {
       state.wishlist = action.payload;
-      state.isInitialized = true;
+      state.ready = true;
     },
     addToWishlist: (state, action: PayloadAction<number>) => {
       const id = action.payload;
@@ -54,7 +54,7 @@ const wishlistSlice = createSlice({
 });
 
 export const {
-  hydrateWishlist,
+  setWishlist,
   addToWishlist,
   removeFromWishlist,
   clearWishlist,
