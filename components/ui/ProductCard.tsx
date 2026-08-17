@@ -1,25 +1,22 @@
 "use client";
 
-import { Wishlist } from "../../icons";
+import { Wishlist } from "@/icons";
 import AppImage from "./Image";
 import Button from "./Button";
 import Heading from "./Heading";
 import Paragraph from "./Paragraph";
 import { useEffect, useState } from "react";
 import { useRouter } from "nextjs-toploader/app";
-import { useSelector } from "@/redux/hooks";
-import { store } from "@/redux/store";
+import { useDispatch, useSelector } from "@/redux/hooks";
 import { addToWishlist, removeFromWishlist } from "@/redux/slices/wishlistSlice";
 import { addToCart, removeFromCart } from "@/redux/slices/cartSlice";
+import { MiniCartModal } from "../MiniCart";
+import ConfirmBox from "./ConfirmBox";
 
-/**
- * Single source of truth for product card UI (PDP + Discount).
- * Do not override these from parent sections.
- */
 const cardStyles = {
-  root: "relative flex h-full w-full flex-col items-center rounded-[8px] bg-surface-card px-[12px] pt-[63px] pb-[24px] md:px-[16px] 2xl:pt-[70px] 2xl:pb-[24px]",
+  root: "relative flex h-full w-full cursor-pointer flex-col items-center rounded-[8px] bg-surface-card px-[12px] pt-[63px] pb-[24px] md:px-[16px] 2xl:pt-[70px] 2xl:pb-[24px]",
   wishlist:
-    "absolute top-[23px] right-[14px] z-10 flex cursor-pointer items-center justify-end md:top-[22px] md:right-[16px]",
+    "absolute top-[23px] right-[14px] z-5 flex cursor-pointer items-center justify-end md:top-[22px] md:right-[16px]",
   imageWrap:
     "flex h-[104px] w-[104px] shrink-0 items-center justify-center md:h-[160px] md:w-[160px]",
   image: "h-full w-full object-contain",
@@ -33,15 +30,12 @@ const cardStyles = {
 export type ProductCardProps = {
   id: number;
   title: string;
-  /** DummyJSON `brand` (preferred subtitle) */
   brand?: string;
-  /** @deprecated use `brand` — kept for backward compatibility */
   title2?: string;
   price: number;
   thumbnail: string;
   buttonText: string;
   currencySymbol?: string;
-  onWishlist?: (id: string) => void;
 };
 
 export default function ProductCard({
@@ -51,13 +45,15 @@ export default function ProductCard({
   title2 = "",
   price,
   thumbnail,
-  buttonText,
   currencySymbol = "$",
-  onWishlist,
 }: ProductCardProps) {
   const [hasMounted, setHasMounted] = useState(false);
+  const [cartOpen, setCartOpen] = useState(false);
+  const [confirmOpen, setConfirmOpen] = useState(false);
   const wishlist = useSelector((state) => state.wishlist.wishlist);
   const cart = useSelector((state) => state.cart.cart);
+  const dispatch = useDispatch();
+  const router = useRouter();
 
   useEffect(() => {
     setHasMounted(true);
@@ -65,7 +61,6 @@ export default function ProductCard({
 
   const isWishlist = hasMounted && wishlist.includes(Number(id));
   const isInCart = hasMounted && cart.some((item) => item.id === Number(id));
-  // One title block like PDP — keeps card height consistent
   const subtitle = brand || title2;
   const displayTitle = subtitle ? (
     <>
@@ -76,24 +71,44 @@ export default function ProductCard({
   ) : (
     title
   );
-  const router = useRouter();
-  const dispatch = store.dispatch;
-  const handleWishlist = () => {
-    if(isWishlist){
+
+  const goToProduct = () => {
+    router.push(`/products/${id}`);
+  };
+
+  const handleWishlist = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (isWishlist) {
       dispatch(removeFromWishlist(Number(id)));
-    }else{
+    } else {
       dispatch(addToWishlist(Number(id)));
     }
   };
 
+  const handleCart = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (isInCart) {
+      setConfirmOpen(true);
+      return;
+    }
+    dispatch(
+      addToCart({
+        id: Number(id),
+        title,
+        price,
+        thumbnail,
+        quantity: 1,
+      })
+    );
+    setCartOpen(true);
+  };
+
   return (
-    <div className={cardStyles.root}>
+    <div className={cardStyles.root} onClick={goToProduct}>
       <button
         type="button"
         className={cardStyles.wishlist + " cursor-pointer"}
-        onClick={() => {
-          handleWishlist();
-        }}
+        onClick={handleWishlist}
       >
         <Wishlist isWishlist={isWishlist} />
       </button>
@@ -101,7 +116,7 @@ export default function ProductCard({
       <div className={cardStyles.imageWrap}>
         <AppImage
           src={thumbnail}
-          alt={displayTitle as string}
+          alt={title}
           width={160}
           height={160}
           className={cardStyles.image}
@@ -123,34 +138,20 @@ export default function ProductCard({
 
       <Button
         variant="solid"
-        text={
-          buttonText === "View Product"
-            ? buttonText
-            : isInCart
-              ? "Remove from Cart"
-              : "Add to Cart"
-        }
+        text={isInCart ? "Remove from Cart" : "Add to Cart"}
         className={cardStyles.button}
-        onClick={() => {
-          if (buttonText === "View Product") {
-            router.push(`/products/${String(id)}`);
-            return;
-          }
+        onClick={handleCart}
+      />
 
-          if (isInCart) {
-            dispatch(removeFromCart(Number(id)));
-            return;
-          }
-
-          dispatch(
-            addToCart({
-              id: Number(id),
-              title,
-              price,
-              thumbnail,
-              quantity: 1,
-            })
-          );
+      <MiniCartModal open={cartOpen} onClose={() => setCartOpen(false)} />
+      <ConfirmBox
+        open={confirmOpen}
+        title="Remove from cart?"
+        message={`Are you sure you want to remove ${title} from your cart?`}
+        onNo={() => setConfirmOpen(false)}
+        onYes={() => {
+          dispatch(removeFromCart(Number(id)));
+          setConfirmOpen(false);
         }}
       />
     </div>

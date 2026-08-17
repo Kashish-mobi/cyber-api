@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Button from "./Button";
-import { DownArrow, UpArrow } from "@/app/icons";
+import { DownArrow, UpArrow } from "@/icons";
 
 type DropDownProps = {
   options: string[];

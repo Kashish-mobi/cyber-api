@@ -1,6 +1,6 @@
 import Link from "next/link";
 import homepage from "@/data/homepage.json";
-import { CompanyLogoLight } from "../icons";
+import { CompanyLogoLight } from "@/icons";
 import { getIcon, type IconName } from "@/lib/icons";
 import Heading from "./ui/Heading";
 import Paragraph from "./ui/Paragraph";

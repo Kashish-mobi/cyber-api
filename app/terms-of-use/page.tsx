@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import ComingSoon from "@/app/components/ComingSoon";
+import ComingSoon from "@/components/ComingSoon";
 
 export const metadata: Metadata = {
   title: "Terms of Use — CyberStore",

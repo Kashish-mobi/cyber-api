@@ -1,10 +1,10 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import Heading from "@/app/components/ui/Heading";
-import Paragraph from "@/app/components/ui/Paragraph";
-import Button from "@/app/components/ui/Button";
-import AppImage from "@/app/components/ui/Image";
+import Heading from "@/components/ui/Heading";
+import Paragraph from "@/components/ui/Paragraph";
+import Button from "@/components/ui/Button";
+import AppImage from "@/components/ui/Image";
 import { addToWishlist, removeFromWishlist } from "@/redux/slices/wishlistSlice";
 import { addToCart, removeFromCart } from "@/redux/slices/cartSlice";
 import {
@@ -18,7 +18,7 @@ import {
   Guarentee,
   Stock,
   Wishlist,
-} from "@/app/icons";
+} from "@/icons";
 import { cn } from "@/lib/cn";
 import { useDispatch, useSelector } from "@/redux/hooks";
 import { useRouter } from "nextjs-toploader/app";

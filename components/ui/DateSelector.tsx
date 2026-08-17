@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { UpArrow, DownArrow } from "@/app/icons";
+import { UpArrow, DownArrow } from "@/icons";
 
 type DateSelectorProps = {
   selected?: string;

@@ -1,15 +1,15 @@
 "use client";
 
 import { useEffect, useState, type MouseEvent } from "react";
-import BreadCrumbs from "@/app/components/BreadCrumbs";
-import { FilterSectionDesktop, FilterSectionMobile } from "@/app/components/FilterSection";
-import ProductCard from "@/app/components/ui/ProductCard";
-import Button from "@/app/components/ui/Button";
-import DropDown from "@/app/components/ui/DropDown";
-import Paragraph from "@/app/components/ui/Paragraph";
-import Pagination from "@/app/components/ui/Pagination";
-import { FilterIcon, Cross } from "@/app/icons";
-import AppImage from "@/app/components/ui/Image";
+import BreadCrumbs from "@/components/BreadCrumbs";
+import { FilterSectionDesktop, FilterSectionMobile } from "@/components/FilterSection";
+import ProductCard from "@/components/ui/ProductCard";
+import Button from "@/components/ui/Button";
+import DropDown from "@/components/ui/DropDown";
+import Paragraph from "@/components/ui/Paragraph";
+import Pagination from "@/components/ui/Pagination";
+import { FilterIcon, Cross } from "@/icons";
+import AppImage from "@/components/ui/Image";
 import { hideLoader } from "@/redux/loaderSlice";
 import { store } from "@/redux/store";
 import { useDispatch, useSelector } from "@/redux/hooks";

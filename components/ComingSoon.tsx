@@ -1,7 +1,7 @@
-import AppImage from "@/app/components/ui/Image";
-import Button from "@/app/components/ui/Button";
-import Heading from "@/app/components/ui/Heading";
-import Paragraph from "@/app/components/ui/Paragraph";
+import AppImage from "@/components/ui/Image";
+import Button from "@/components/ui/Button";
+import Heading from "@/components/ui/Heading";
+import Paragraph from "@/components/ui/Paragraph";
 
 type ComingSoonProps = {
   title: string;

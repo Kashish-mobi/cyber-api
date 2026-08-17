@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 import homepage from "@/data/homepage.json";
 import { cn } from "@/lib/cn";
 import { getIcon, type IconName } from "@/lib/icons";
-import { LeftArrow, RightArrow } from "../icons";
+import { LeftArrow, RightArrow } from "@/icons";
 import Heading from "./ui/Heading";
 
 const { categories } = homepage;

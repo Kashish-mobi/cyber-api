@@ -1,4 +1,4 @@
-import AppImage from './components/ui/Image'
+import AppImage from '@/components/ui/Image'
 
 const NotFoundPage = () => {
   return (

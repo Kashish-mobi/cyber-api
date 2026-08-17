@@ -1,18 +1,18 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Address, Shipping, Payment, Edit, Delete, PlusLine } from "@/app/icons";
-import Heading from "@/app/components/ui/Heading";
-import Radio from "@/app/components/ui/Radio";
-import Paragraph from "@/app/components/ui/Paragraph";
-import Button from "@/app/components/ui/Button";
-import DateSelector from "@/app/components/ui/DateSelector";
-import Tabs from "@/app/components/ui/Tabs";
-import Input from "@/app/components/ui/Input";
-import CheckBox from "@/app/components/ui/CheckBox";
-import CreditCardPreview from "@/app/components/ui/CreditCardPreview";
-import AddressModal from "@/app/components/AddressModal";
-import ConfirmBox from "@/app/components/ui/ConfirmBox";
+import { Address, Shipping, Payment, Edit, Delete, PlusLine } from "@/icons";
+import Heading from "@/components/ui/Heading";
+import Radio from "@/components/ui/Radio";
+import Paragraph from "@/components/ui/Paragraph";
+import Button from "@/components/ui/Button";
+import DateSelector from "@/components/ui/DateSelector";
+import Tabs from "@/components/ui/Tabs";
+import Input from "@/components/ui/Input";
+import CheckBox from "@/components/ui/CheckBox";
+import CreditCardPreview from "@/components/ui/CreditCardPreview";
+import AddressModal from "@/components/AddressModal";
+import ConfirmBox from "@/components/ui/ConfirmBox";
 import { useDispatch, useSelector } from "@/redux/hooks";
 import {
   addAddress,

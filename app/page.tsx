@@ -1,11 +1,11 @@
 import type { Metadata } from "next";
-import MainSection from "@/app/components/MainSection";
-import FeatureSection from "@/app/components/FeatureSection";
-import CategorySection from "@/app/components/CategorySection";
-import PDPSection from "@/app/components/PDPSection";
-import PopularSection from "@/app/components/PopularSection";
-import DiscountedSection from "@/app/components/DiscountedSection";
-import BannerSection from "@/app/components/BannerSection";
+import MainSection from "@/components/MainSection";
+import FeatureSection from "@/components/FeatureSection";
+import CategorySection from "@/components/CategorySection";
+import PDPSection from "@/components/PDPSection";
+import PopularSection from "@/components/PopularSection";
+import DiscountedSection from "@/components/DiscountedSection";
+import BannerSection from "@/components/BannerSection";
 import homepage from "@/data/homepage.json";
 
 export const metadata: Metadata = {

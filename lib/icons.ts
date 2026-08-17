@@ -16,7 +16,7 @@ import {
   LeftArrow,
   RightArrow,
   Wishlist,
-} from "../app/icons";
+} from "@/icons";
 
 export const iconMap = {
   phone: Phone,

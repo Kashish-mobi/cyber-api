@@ -3,14 +3,64 @@
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import homepage from "@/data/homepage.json";
-import { CompanyLogo, User, WishList, Cart } from "../icons";
+import { CompanyLogo, User, WishList, Cart } from "@/icons";
 import { getIcon, type IconName } from "@/lib/icons";
 import Paragraph from "./ui/Paragraph";
 import SearchBox from "./ui/SearchBox";
 import { useDispatch, useSelector } from "@/redux/hooks";
 import { clearLogin, logout } from "@/redux/slices/userSlice";
+import { MiniCart, MiniCartModal } from "./MiniCart";
 
 const { header, ui } = homepage;
+
+function CartMenu() {
+  const cart = useSelector((state) => state.cart.cart);
+  const [open, setOpen] = useState(false);
+  const [hasMounted, setHasMounted] = useState(false);
+  const menuRef = useRef<HTMLDivElement>(null);
+  const cartCount = hasMounted
+    ? cart.reduce((sum, item) => sum + item.quantity, 0)
+    : 0;
+
+  useEffect(() => {
+    setHasMounted(true);
+  }, []);
+
+  useEffect(() => {
+    function handleClickOutside(e: MouseEvent) {
+      if (menuRef.current && !menuRef.current.contains(e.target as Node)) {
+        setOpen(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  return (
+    <div className="relative" ref={menuRef}>
+      <button
+        type="button"
+        aria-label="Cart"
+        aria-expanded={open}
+        onClick={() => setOpen(!open)}
+        className="relative inline-flex cursor-pointer items-center"
+      >
+        <Cart />
+        {cartCount > 0 ? (
+          <span className="absolute -top-[6px] -right-[8px] flex h-[18px] min-w-[18px] items-center justify-center rounded-full bg-primary px-[4px] text-[10px] font-[600] text-white">
+            {cartCount}
+          </span>
+        ) : null}
+      </button>
+
+      {open ? (
+        <div className="absolute top-[45px] right-0 z-[80] w-[360px] overflow-hidden rounded-[8px] border border-border-light bg-secondary shadow-lg">
+          <MiniCart onClose={() => setOpen(false)} simple />
+        </div>
+      ) : null}
+    </div>
+  );
+}
 
 function UserMenu() {
   const dispatch = useDispatch();
@@ -62,38 +112,23 @@ function UserMenu() {
 
 export default function Header() {
   const [menuOpen, setMenuOpen] = useState(false);
+  const [cartOpen, setCartOpen] = useState(false);
   const [hasMounted, setHasMounted] = useState(false);
   const isAuthenticated = useSelector(
     (state) => state.user.isAuthenticated
   );
   const wishlist = useSelector((state) => state.wishlist.wishlist);
-  const cart = useSelector((state) => state.cart.cart);
 
   useEffect(() => {
     setHasMounted(true);
   }, []);
 
   const isWishlistFilled = hasMounted && wishlist.length > 0;
-  const cartCount = hasMounted
-    ? cart.reduce((sum, item) => sum + item.quantity, 0)
-    : 0;
 
   const userActionLink = header.actionLinks.find((link) => link.icon === "user");
   const actionIcon = (name: string) => {
     if (name === "wishlist") {
       return <WishList isWishlist={isWishlistFilled} />;
-    }
-    if (name === "cart") {
-      return (
-        <span className="relative inline-flex">
-          <Cart />
-          {cartCount > 0 ? (
-            <span className="absolute -top-[6px] -right-[8px] flex h-[18px] min-w-[18px] items-center justify-center rounded-full bg-primary px-[4px] text-[10px] font-[600] text-white">
-              {cartCount}
-            </span>
-          ) : null}
-        </span>
-      );
     }
     const Icon = getIcon(name as IconName);
     return Icon ? <Icon /> : null;
@@ -128,12 +163,13 @@ export default function Header() {
 
         <div className="flex items-center gap-4 2xl:gap-[24px]">
           {header.actionLinks
-            .filter((link) => link.icon !== "user")
+            .filter((link) => link.icon !== "user" && link.icon !== "cart")
             .map((link) => (
               <Link key={link.href} href={link.href} aria-label={link.label}>
                 {actionIcon(link.icon)}
               </Link>
             ))}
+          <CartMenu />
           {isAuthenticated ? (
             <UserMenu />
           ) : userActionLink ? (
@@ -167,13 +203,16 @@ export default function Header() {
           ))}
         </nav>
 
-        {isAuthenticated ? (
-          <UserMenu />
-        ) : userActionLink ? (
-          <Link href="/login" aria-label={userActionLink.label}>
-            <User />
-          </Link>
-        ) : null}
+        <div className="flex items-center gap-4">
+          <CartMenu />
+          {isAuthenticated ? (
+            <UserMenu />
+          ) : userActionLink ? (
+            <Link href="/login" aria-label={userActionLink.label}>
+              <User />
+            </Link>
+          ) : null}
+        </div>
       </div>
 
       {/* Mobile */}
@@ -270,16 +309,30 @@ export default function Header() {
         <div className="mt-[8px] flex flex-col px-[20px] pb-[20px]">
           {header.actionLinks
             .filter((link) => link.icon !== "user")
-            .map((link) => (
-              <Link
-                key={link.href}
-                href={link.href}
-                className="border-b border-border-light py-[16px] text-[16px] font-[500]"
-                onClick={() => setMenuOpen(false)}
-              >
-                {link.label}
-              </Link>
-            ))}
+            .map((link) =>
+              link.icon === "cart" ? (
+                <button
+                  key={link.href}
+                  type="button"
+                  className="border-b border-border-light py-[16px] text-left text-[16px] font-[500]"
+                  onClick={() => {
+                    setMenuOpen(false);
+                    setCartOpen(true);
+                  }}
+                >
+                  {link.label}
+                </button>
+              ) : (
+                <Link
+                  key={link.href}
+                  href={link.href}
+                  className="border-b border-border-light py-[16px] text-[16px] font-[500]"
+                  onClick={() => setMenuOpen(false)}
+                >
+                  {link.label}
+                </Link>
+              )
+            )}
           {header.authLinks.map((link) => (
             <Link
               key={link.href}
@@ -292,6 +345,7 @@ export default function Header() {
           ))}
         </div>
       </div>
+      <MiniCartModal open={cartOpen} onClose={() => setCartOpen(false)} />
     </header>
   );
 }

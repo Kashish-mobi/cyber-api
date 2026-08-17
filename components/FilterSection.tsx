@@ -5,13 +5,13 @@ import {
   LeftArrow,
   DownArrow,
   UpArrow,
-} from "../icons";
+} from "@/icons";
 import Button from "./ui/Button";
 import Heading from "./ui/Heading";
 import CheckBox from "./ui/CheckBox";
 import Paragraph from "./ui/Paragraph";
 import Input from "./ui/Input";
-import { Search } from "../icons";
+import { Search } from "@/icons";
 import { useFilters } from "@/redux/useFilters";
 import { DEFAULT_CATEGORY, MAX_PRICE, MIN_PRICE } from "@/redux/slices/filterSlice";
 import { useDispatch, useSelector } from "@/redux/hooks";

@@ -302,7 +302,8 @@ export const Plus = () => {
 
   )
 }
-export const Cross = ({ onClick }) => {
+/** @param {{ onClick?: Function }} [props] */
+export const Cross = ({ onClick } = {}) => {
   return (
     <svg
       width="24"

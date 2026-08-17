@@ -1,5 +1,5 @@
 "use client";
-import { Search, Cross } from "@/app/icons";
+import { Search, Cross } from "@/icons";
 import { cn } from "@/lib/cn";
 import { useEffect, useState } from "react";
 import Button from "./Button";

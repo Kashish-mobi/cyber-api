@@ -1,9 +1,9 @@
-import Breadcrumbs from "@/app/components/BreadCrumbs";
-import ProductPurchase from "@/app/components/ProductPurchase";
-import ProductDetails from "@/app/components/ProductDetails";
-import ProductReviews from "@/app/components/ProductReviews";
-import DiscountedSection from "@/app/components/DiscountedSection";
-import AppImage from "@/app/components/ui/Image";
+import Breadcrumbs from "@/components/BreadCrumbs";
+import ProductPurchase from "@/components/ProductPurchase";
+import ProductDetails from "@/components/ProductDetails";
+import ProductReviews from "@/components/ProductReviews";
+import DiscountedSection from "@/components/DiscountedSection";
+import AppImage from "@/components/ui/Image";
 
 import { store } from "@/redux/store";
 import {

@@ -1,8 +1,8 @@
-import Heading from "@/app/components/ui/Heading";
-import Paragraph from "@/app/components/ui/Paragraph";
-import Button from "@/app/components/ui/Button";
-import AppImage from "@/app/components/ui/Image";
-import { Star, UpArrow } from "@/app/icons";
+import Heading from "@/components/ui/Heading";
+import Paragraph from "@/components/ui/Paragraph";
+import Button from "@/components/ui/Button";
+import AppImage from "@/components/ui/Image";
+import { Star, UpArrow } from "@/icons";
 import { cn } from "@/lib/cn";
 import Input from "./ui/Input";
 

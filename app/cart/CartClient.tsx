@@ -1,12 +1,12 @@
 "use client";
 
 import { useState } from "react";
-import Button from "../components/ui/Button";
-import Heading from "../components/ui/Heading";
-import Input from "../components/ui/Input";
-import Paragraph from "../components/ui/Paragraph";
-import CartStrip from "../components/CartStrip";
-import AppImage from "../components/ui/Image";
+import Button from "@/components/ui/Button";
+import Heading from "@/components/ui/Heading";
+import Input from "@/components/ui/Input";
+import Paragraph from "@/components/ui/Paragraph";
+import CartStrip from "@/components/CartStrip";
+import AppImage from "@/components/ui/Image";
 
 import { useDispatch, useSelector } from "@/redux/hooks";
 import { saveCodes } from "@/redux/slices/cartSlice";

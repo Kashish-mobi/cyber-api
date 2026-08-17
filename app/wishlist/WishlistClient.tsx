@@ -1,9 +1,9 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import Heading from "../components/ui/Heading";
-import ProductCard from "../components/ui/ProductCard";
-import AppImage from "../components/ui/Image";
+import Heading from "@/components/ui/Heading";
+import ProductCard from "@/components/ui/ProductCard";
+import AppImage from "@/components/ui/Image";
 import { useSelector } from "@/redux/hooks";
 
 type Product = {

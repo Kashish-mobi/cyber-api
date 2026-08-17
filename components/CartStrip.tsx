@@ -4,7 +4,7 @@ import Paragraph from "./ui/Paragraph";
 import AppImage from "./ui/Image";
 import Heading from "./ui/Heading";
 import Button from "./ui/Button";
-import { Minus, Plus, Cross } from "../icons";
+import { Minus, Plus, Cross } from "@/icons";
 import { useState } from "react";
 import { useRouter } from "nextjs-toploader/app";
 import { store } from "@/redux/store";

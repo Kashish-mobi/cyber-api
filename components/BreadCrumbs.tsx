@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { BreadCrumbs as BreadCrumbsIcon } from "../icons";
+import { BreadCrumbs as BreadCrumbsIcon } from "@/icons";
 import { capitalize } from "@/lib/helper";
 
 export type BreadCrumbsProps = {
