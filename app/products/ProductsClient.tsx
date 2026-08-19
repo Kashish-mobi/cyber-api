@@ -13,7 +13,7 @@ import AppImage from "@/components/ui/Image";
 import { hideLoader } from "@/redux/loaderSlice";
 import { store } from "@/redux/store";
 import { useDispatch, useSelector } from "@/redux/hooks";
-import { getChips, setFilters } from "@/redux/slices/filterSlice";
+import { defaultFilters, getChips, setFilters } from "@/redux/slices/filterSlice";
 import { setFiltered } from "@/redux/slices/productSlice";
 import { getFiltersFromUrl, loadProducts, useFilters } from "@/redux/useFilters";
 
@@ -40,10 +40,12 @@ type Chip = {
 function ChipList({
   chips,
   onRemove,
+  onClearAll,
   className,
 }: {
   chips: Chip[];
   onRemove: (key: string, value?: string) => void;
+  onClearAll: () => void;
   className: string;
 }) {
   if (chips.length === 0) return null;
@@ -66,6 +68,14 @@ function ChipList({
           />
         </button>
       ))}
+      <button
+        type="button"
+        className="flex items-center gap-[6px] rounded-full border border-red-200 bg-red-50 px-[12px] py-[6px] text-[12px] font-[500] text-red-600 hover:bg-red-100"
+        onClick={onClearAll}
+      >
+        Clear all
+        {/* <Cross onClick={(e: MouseEvent) => { e.stopPropagation(); onClearAll(); }} /> */}
+      </button>
     </div>
   );
 }
@@ -110,6 +120,10 @@ export default function ProductsClient({
   const totalPages = Math.max(1, Math.ceil(total / limit));
   const chips = getChips(filters);
 
+  const handleClearAll = () => {
+    applyFilters(defaultFilters);
+  };
+
   useEffect(() => {
     dispatch(setFiltered(false));
     dispatch(setFilters(getFiltersFromUrl()));
@@ -145,7 +159,7 @@ export default function ProductsClient({
     { label: "Home", href: "/" },
     { label: "Catalog", href: "/products" },
     {
-      label: category === "all" ? query || "Products" : category || query || "Products",
+      label: category || query || "Products",
       href: `/products${filterText ? `?filter=${encodeURIComponent(filterText)}` : ""}`,
     },
   ]}
@@ -154,6 +168,7 @@ export default function ProductsClient({
         <ChipList
           chips={chips}
           onRemove={removeChip}
+          onClearAll={handleClearAll}
           className="hidden flex-wrap gap-[8px] pt-[16px] lg:flex"
         />
 
@@ -206,6 +221,7 @@ export default function ProductsClient({
             <ChipList
               chips={chips}
               onRemove={removeChip}
+              onClearAll={handleClearAll}
               className="relative z-0 flex w-full overflow-x-scroll gap-[8px] lg:hidden"
             />
             <div className="pt-[28px] lg:hidden">

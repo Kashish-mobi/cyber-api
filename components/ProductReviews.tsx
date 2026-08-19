@@ -1,10 +1,12 @@
+"use client";
 import Heading from "@/components/ui/Heading";
 import Paragraph from "@/components/ui/Paragraph";
 import Button from "@/components/ui/Button";
 import AppImage from "@/components/ui/Image";
-import { Star, UpArrow } from "@/icons";
+import { DownArrow, Star, UpArrow } from "@/icons";
 import { cn } from "@/lib/cn";
 import Input from "./ui/Input";
+import {useState} from "react";
 
 type RatingBreakdown = {
   label: string;
@@ -83,7 +85,8 @@ export default function ProductReviews({
 }: ProductReviewsProps) {
   const maxCount = Math.max(...ratingBreakdown.map((item) => item.count), 1);
   const fromLabel = fromReviewsLabel.replace("{count}", String(totalReviews));
-
+  const [initial, setInitial] = useState(2);
+  const [showMore, setShowMore] = useState(false);
   return (
     <>
     <section className="flex flex-col gap-[46px] md:gap-[48px]">
@@ -149,10 +152,10 @@ export default function ProductReviews({
       
     </section>
     <div className="flex flex-col gap-[24px] pt-[32px]">
-    {items.map((review) => (
+    {items.slice(0, showMore ? items.length : initial).map((review) => (
       <article
         key={review.id}
-        className="rounded-[12px] bg-surface-card py-[24px] px-[16px] flex flex-col gap-[16px]"
+        className="rounded-[12px] bg-surface-card py-[24px] px-[16px] flex flex-col gap-[16px] "
       >
         <div className="flex  items-start justify-between gap-[18px]">
         <Avatar name={review.name} src={review.avatar || undefined} />
@@ -205,15 +208,19 @@ export default function ProductReviews({
     ))}
   </div>
 
+  {items.length > 2 && (
   <div className="flex justify-center pt-[24px]">
-  <Button
-    variant="dark"
-    className="group gap-[8px] !min-w-[216px] !h-[48px]"
-  >
-    {viewMoreLabel}
-    <UpArrow className="transition-colors duration-300" />
-  </Button>
-</div>
+    <Button
+      variant="dark"
+      className="group gap-[8px] !min-w-[216px] !h-[48px] transition-all duration-300"
+      onClick={() => setShowMore((prev) => !prev)}
+    >
+      {showMore ? "Show Less" : viewMoreLabel}
+
+      {showMore ? <DownArrow /> : <UpArrow />}
+    </Button>
+  </div>
+)}
   </>
   );
 }

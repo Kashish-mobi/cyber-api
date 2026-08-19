@@ -105,6 +105,7 @@ export default function CheckoutPage() {
   const [cvv, setCvv] = useState("");
   const [sameAsBilling, setSameAsBilling] = useState(true);
   const [paypalEmail, setPaypalEmail] = useState("");
+  const [errors, setErrors] = useState<Record<string, string>>({});
 
   useEffect(() => {
     setHasMounted(true);
@@ -137,7 +138,50 @@ export default function CheckoutPage() {
     );
   };
 
+  const validateStep = (current: number) => {
+    const next: Record<string, string> = {};
+
+    if (current === 1) {
+      if (!selectedAddressId) {
+        next.address = "Please select a delivery address.";
+      }
+    }
+
+    if (current === 2) {
+      if (shippingMethodId === 3 && !shippingDate) {
+        next.shippingDate = "Please pick a delivery date.";
+      }
+    }
+
+    if (current === 3) {
+      if (activeTab === "credit-card") {
+        if (!cardholderName.trim()) next.cardholderName = "Cardholder name is required.";
+        const digits = cardNumber.replace(/\s/g, "");
+        if (digits.length < 16) next.cardNumber = "Enter a valid 16-digit card number.";
+        if (!expDate.trim()) next.expDate = "Expiry date is required.";
+        if (cvv.length < 3) next.cvv = "CVV must be 3 digits.";
+      } else {
+        if (!paypalEmail.trim() || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(paypalEmail)) {
+          next.paypalEmail = "Enter a valid PayPal email.";
+        }
+        if (activeTab === "paypal-credit" && !cardholderName.trim()) {
+          next.cardholderName = "Full name is required.";
+        }
+      }
+    }
+
+    setErrors(next);
+    return Object.keys(next).length === 0;
+  };
+
+  const handleNext = () => {
+    if (!validateStep(step)) return;
+    setErrors({});
+    setStep((current) => current + 1);
+  };
+
   const handlePay = () => {
+    if (!validateStep(3)) return;
     dispatch(clearCart());
     dispatch(clearCodes());
     setThankYou(true);
@@ -282,6 +326,9 @@ export default function CheckoutPage() {
                   <PlusLine />
                   <Paragraph type="cart">Add New Address</Paragraph>
                 </button>
+                {errors.address && (
+                  <p className="text-sm text-red-500">{errors.address}</p>
+                )}
               </div>
             )}
 
@@ -331,6 +378,9 @@ export default function CheckoutPage() {
                     </div>
                   </div>
                 ))}
+                {errors.shippingDate && (
+                  <p className="text-sm text-red-500">{errors.shippingDate}</p>
+                )}
               </div>
             )}
 
@@ -354,45 +404,51 @@ export default function CheckoutPage() {
                     <div className="flex items-center justify-center">
                       <CreditCardPreview
                         cardNumber={cardNumber || "4085 9536 8475 9530"}
-                        cardholder={cardholderName || "Cardholder"}
+                        cardholder={cardholderName || ""}
                       />
                     </div>
                     <div className="flex flex-col gap-[16px]">
-                      <Input
-                        placeholder="Cardholder Name"
-                        variant="base"
-                        value={cardholderName}
-                        onChange={(e) => setCardholderName(e.target.value)}
-                        required={true}
-                      />
-                      <Input
-                        placeholder="Card Number"
-                        variant="base"
-                        inputMode="numeric"
-                        value={cardNumber}
-                        onChange={(e) => setCardNumber(formatCardNumber(e.target.value))}
-                        required={true}
-                      />
-                      <div className="grid grid-cols-2 gap-[16px]">
+                      <div className="flex flex-col gap-[4px]">
                         <Input
-                          placeholder="Exp. Date"
+                          placeholder="Cardholder Name"
                           variant="base"
-                          value={expDate}
-                          onChange={(e) => setExpDate(e.target.value)}
-                          required={true}
+                          value={cardholderName}
+                          onChange={(e) => { setCardholderName(e.target.value); setErrors((p) => ({ ...p, cardholderName: "" })); }}
                         />
+                        {errors.cardholderName && <p className="text-sm text-red-500">{errors.cardholderName}</p>}
+                      </div>
+                      <div className="flex flex-col gap-[4px]">
                         <Input
-                          placeholder="CVV"
-                          type="password"
+                          placeholder="Card Number"
                           variant="base"
                           inputMode="numeric"
-                          value={cvv}
-                          maxLength={3}
-                          required={true}
-                          onChange={(e) =>
-                            setCvv(e.target.value.replace(/\D/g, "").slice(0, 4))
-                          }
+                          value={cardNumber}
+                          onChange={(e) => { setCardNumber(formatCardNumber(e.target.value)); setErrors((p) => ({ ...p, cardNumber: "" })); }}
                         />
+                        {errors.cardNumber && <p className="text-sm text-red-500">{errors.cardNumber}</p>}
+                      </div>
+                      <div className="grid grid-cols-2 gap-[16px]">
+                        <div className="flex flex-col gap-[4px]">
+                          <Input
+                            placeholder="Exp. Date (MM/YY)"
+                            variant="base"
+                            value={expDate}
+                            onChange={(e) => { setExpDate(e.target.value); setErrors((p) => ({ ...p, expDate: "" })); }}
+                          />
+                          {errors.expDate && <p className="text-sm text-red-500">{errors.expDate}</p>}
+                        </div>
+                        <div className="flex flex-col gap-[4px]">
+                          <Input
+                            placeholder="CVV"
+                            type="password"
+                            variant="base"
+                            inputMode="numeric"
+                            value={cvv}
+                            maxLength={3}
+                            onChange={(e) => { setCvv(e.target.value.replace(/\D/g, "").slice(0, 4)); setErrors((p) => ({ ...p, cvv: "" })); }}
+                          />
+                          {errors.cvv && <p className="text-sm text-red-500">{errors.cvv}</p>}
+                        </div>
                       </div>
                     </div>
                     <CheckBox
@@ -414,20 +470,26 @@ export default function CheckoutPage() {
                         Enter your PayPal email to complete your purchase.
                       </Paragraph>
                     </div>
-                    <Input
-                      type="email"
-                      placeholder="PayPal Email"
-                      variant="base"
-                      value={paypalEmail}
-                      onChange={(e) => setPaypalEmail(e.target.value)}
-                    />
-                    {activeTab === "paypal-credit" && (
+                    <div className="flex flex-col gap-[4px]">
                       <Input
-                        placeholder="Full Name"
+                        type="email"
+                        placeholder="PayPal Email"
                         variant="base"
-                        value={cardholderName}
-                        onChange={(e) => setCardholderName(e.target.value)}
+                        value={paypalEmail}
+                        onChange={(e) => { setPaypalEmail(e.target.value); setErrors((p) => ({ ...p, paypalEmail: "" })); }}
                       />
+                      {errors.paypalEmail && <p className="text-sm text-red-500">{errors.paypalEmail}</p>}
+                    </div>
+                    {activeTab === "paypal-credit" && (
+                      <div className="flex flex-col gap-[4px]">
+                        <Input
+                          placeholder="Full Name"
+                          variant="base"
+                          value={cardholderName}
+                          onChange={(e) => { setCardholderName(e.target.value); setErrors((p) => ({ ...p, cardholderName: "" })); }}
+                        />
+                        {errors.cardholderName && <p className="text-sm text-red-500">{errors.cardholderName}</p>}
+                      </div>
                     )}
                     <CheckBox
                       label="Same as billing address"
@@ -458,7 +520,7 @@ export default function CheckoutPage() {
                 <Button
                   variant="fill-dark"
                   className="!h-[64px] !w-[158px] !min-w-[158px] md:!w-[210px]"
-                  onClick={() => setStep((current) => current + 1)}
+                  onClick={handleNext}
                 >
                   Next
                 </Button>

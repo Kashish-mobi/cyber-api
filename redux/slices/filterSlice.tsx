@@ -13,7 +13,7 @@ export type Filters = {
   sortBy: string;
   minPrice: number | null;
   maxPrice: number | null;
-  brand: string;
+  brand: string[];
   rating: number | null;
   availability: string;
   discount: number | null;
@@ -26,7 +26,7 @@ export const defaultFilters: Filters = {
   sortBy: DEFAULT_SORT,
   minPrice: null,
   maxPrice: null,
-  brand: "",
+  brand: [],
   rating: null,
   availability: "",
   discount: null,
@@ -46,19 +46,13 @@ export function filtersToString(filter: Filters) {
   const parts: string[] = [];
 
   if (filter.q) parts.push(`q=${encodeURIComponent(filter.q)}`);
-  if (filter.category === "all" || filter.category !== DEFAULT_CATEGORY) {
-    parts.push(`category=${filter.category}`);
-  }
   if (filter.sortBy && filter.sortBy !== DEFAULT_SORT) {
     parts.push(`sortBy=${filter.sortBy}`);
   }
   if (filter.page > 1) parts.push(`page=${filter.page}`);
   if (filter.minPrice !== null) parts.push(`minPrice=${filter.minPrice}`);
   if (filter.maxPrice !== null) parts.push(`maxPrice=${filter.maxPrice}`);
-  filter.brand
-    .split(",")
-    .filter(Boolean)
-    .forEach((brand) => parts.push(`brand=${encodeURIComponent(brand)}`));
+  filter.brand.forEach((brand) => parts.push(`brand=${encodeURIComponent(brand)}`));
   if (filter.rating !== null) parts.push(`rating=${filter.rating}`);
   if (filter.availability) parts.push(`availability=${filter.availability}`);
   if (filter.discount !== null) parts.push(`discount=${filter.discount}`);
@@ -78,7 +72,6 @@ export function stringToFilters(value?: string | null): Filters {
     const raw = decodeURIComponent(part.slice(eq + 1));
 
     if (key === "q") filter.q = raw;
-    if (key === "category") filter.category = raw;
     if (key === "sortBy") filter.sortBy = raw;
     if (key === "page") {
       const page = Number(raw);
@@ -93,7 +86,7 @@ export function stringToFilters(value?: string | null): Filters {
       filter.maxPrice = Number.isNaN(amount) ? null : amount;
     }
     if (key === "brand") {
-      filter.brand = filter.brand ? `${filter.brand},${raw}` : raw;
+      filter.brand = [...filter.brand, raw];
     }
     if (key === "rating") {
       const amount = Number(raw);
@@ -127,9 +120,8 @@ export function filterProducts<T extends Product>(
   if (filters.maxPrice !== null) {
     result = result.filter((item) => item.price <= filters.maxPrice!);
   }
-  if (filters.brand) {
-    const brands = filters.brand.split(",").filter(Boolean);
-    result = result.filter((item) => item.brand && brands.includes(item.brand));
+  if (filters.brand.length) {
+    result = result.filter((item) => item.brand && filters.brand.includes(item.brand));
   }
   if (filters.rating !== null) {
     result = result.filter((item) => (item.rating || 0) >= filters.rating!);
@@ -164,17 +156,13 @@ export function removeFilter(
 ): Filters {
   const next = { ...filters, page: 1 };
 
-  if (key === "category") next.category = "all";
   if (key === "q") next.q = "";
   if (key === "price") {
     next.minPrice = null;
     next.maxPrice = null;
   }
   if (key === "brand") {
-    next.brand = next.brand
-      .split(",")
-      .filter((item) => item && item !== value)
-      .join(",");
+    next.brand = next.brand.filter((item) => item !== value);
   }
   if (key === "rating") next.rating = null;
   if (key === "availability") next.availability = "";
@@ -186,12 +174,6 @@ export function removeFilter(
 export function getChips(filters: Filters): Chip[] {
   const chips: Chip[] = [];
 
-  if (filters.category !== "all") {
-    chips.push({
-      key: "category",
-      label: filters.category.replace(/-/g, " "),
-    });
-  }
   if (filters.q) chips.push({ key: "q", label: `Search: ${filters.q}` });
   if (filters.minPrice !== null || filters.maxPrice !== null) {
     chips.push({
@@ -199,12 +181,9 @@ export function getChips(filters: Filters): Chip[] {
       label: `$${filters.minPrice ?? MIN_PRICE} - $${filters.maxPrice ?? MAX_PRICE}`,
     });
   }
-  filters.brand
-    .split(",")
-    .filter(Boolean)
-    .forEach((brand) => {
-      chips.push({ key: "brand", label: brand, value: brand });
-    });
+  filters.brand.forEach((brand) => {
+    chips.push({ key: "brand", label: brand, value: brand });
+  });
   if (filters.rating !== null) {
     chips.push({
       key: "rating",

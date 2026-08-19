@@ -21,6 +21,7 @@ export default function CartClient() {
 
   const [discountCode, setDiscountCode] = useState("");
   const [bonusCardNumber, setBonusCardNumber] = useState("");
+  const [appliedBonus, setAppliedBonus] = useState("");
 
   const [errors, setErrors] = useState({
     discountCode: "",
@@ -32,10 +33,14 @@ export default function CartClient() {
     0
   );
 
-  const total = products.reduce(
+  const subtotal = products.reduce(
     (sum, item) => sum + item.price * item.quantity,
     0
   );
+
+  const bonusDiscount = appliedBonus === "0000" ? 0.05 : 0;
+  const discountAmount = subtotal * bonusDiscount;
+  const total = subtotal - discountAmount;
 
   const validateForm = () => {
     const newErrors = {
@@ -43,16 +48,16 @@ export default function CartClient() {
       bonusCardNumber: "",
     };
 
-    if (!discountCode.trim()) {
-      newErrors.discountCode = "Please enter a discount code.";
-    }
+    // if (!discountCode.trim()) {
+    //   newErrors.discountCode = "Please enter a discount code.";
+    // }
 
-    if (!bonusCardNumber.trim()) {
-      newErrors.bonusCardNumber = "Please enter your bonus card number.";
-    } else if (!/^\d+$/.test(bonusCardNumber.trim())) {
-      newErrors.bonusCardNumber =
-        "Bonus card number must contain only numbers.";
-    }
+    // if (!bonusCardNumber.trim()) {
+    //   newErrors.bonusCardNumber = "Please enter your bonus card number.";
+    // } else if (!/^\d+$/.test(bonusCardNumber.trim())) {
+    //   newErrors.bonusCardNumber =
+    //     "Bonus card number must contain only numbers.";
+    // }
 
     setErrors(newErrors);
 
@@ -75,7 +80,7 @@ export default function CartClient() {
       })
     );
 
-    router.push(`/checkout?total=${total.toFixed(2)}`);
+    router.push(`/checkout?total=${total.toFixed(2)}${bonusDiscount > 0 ? "&bonus=5" : ""}`);
   };
 
   if (products.length === 0) {
@@ -191,7 +196,7 @@ export default function CartClient() {
                   value={bonusCardNumber}
                   onChange={(e) => {
                     setBonusCardNumber(e.target.value);
-
+                    setAppliedBonus("");
                     setErrors((prev) => ({
                       ...prev,
                       bonusCardNumber: "",
@@ -199,7 +204,24 @@ export default function CartClient() {
                   }}
                   inlineButton={true}
                   buttonText="Apply"
-                  onButton={() => {}}
+                  onButton={() => {
+                    const val = bonusCardNumber.trim();
+                    if (!val) {
+                      setErrors((prev) => ({
+                        ...prev,
+                        bonusCardNumber: "Please enter your bonus card number.",
+                      }));
+                      return;
+                    }
+                    if (!/^\d+$/.test(val)) {
+                      setErrors((prev) => ({
+                        ...prev,
+                        bonusCardNumber: "Bonus card number must contain only numbers.",
+                      }));
+                      return;
+                    }
+                    setAppliedBonus(val);
+                  }}
                   maxLength={16}
                 />
 
@@ -220,7 +242,7 @@ export default function CartClient() {
                   </Paragraph>
 
                   <Paragraph as="p" type="cartTotal">
-                    ${total.toFixed(2)}
+                    ${subtotal.toFixed(2)}
                   </Paragraph>
                 </div>
 
@@ -241,8 +263,28 @@ export default function CartClient() {
                   </div>
                 </div>
 
+                {/* BONUS DISCOUNT */}
+                {bonusDiscount > 0 && (
+                  <div className="flex justify-between rounded-[8px] bg-green-50 px-[12px] py-[8px]">
+                    <Paragraph
+                      as="p"
+                      type="cartTotal"
+                      className="!text-green-600 !font-[500]"
+                    >
+                      Bonus discount (5%)
+                    </Paragraph>
+                    <Paragraph
+                      as="p"
+                      type="cartTotal"
+                      className="!text-green-600 !font-[500]"
+                    >
+                      −${discountAmount.toFixed(2)}
+                    </Paragraph>
+                  </div>
+                )}
+
                 {/* TOTAL */}
-                <div className="flex justify-between">
+                <div className="flex justify-between border-t border-border-light pt-[16px]">
                   <Paragraph as="p" type="cartTotal">
                     Total
                   </Paragraph>

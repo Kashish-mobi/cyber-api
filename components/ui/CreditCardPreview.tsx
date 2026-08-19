@@ -45,7 +45,7 @@ function MastercardLogo() {
 
 export default function CreditCardPreview({
   cardNumber = "4085 9536 8475 9530",
-  cardholder = "Cardholder",
+  cardholder = "",
   className,
 }: CreditCardPreviewProps) {
   return (

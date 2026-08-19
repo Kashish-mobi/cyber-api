@@ -187,11 +187,7 @@ function CategoryOptions({ categories }: { categories: string[] }) {
   const { filters, applyFilters } = useFilters();
   const [search, setSearch] = useState("");
 
-  const isChecked = (slug: string) => {
-    if (filters.category === "all") return false;
-    if (!filters.category) return slug === DEFAULT_CATEGORY;
-    return filters.category === slug;
-  };
+  const isChecked = (slug: string) => filters.category === slug;
 
   const visible = categories.filter((option) =>
     formatCategory(option).toLowerCase().includes(search.toLowerCase())
@@ -211,7 +207,7 @@ function CategoryOptions({ categories }: { categories: string[] }) {
               checked={isChecked(option)}
               onChange={(checked) =>
                 applyFilters({
-                  category: checked ? option : "all",
+                  category: checked ? option : DEFAULT_CATEGORY,
                   q: checked ? "" : filters.q,
                 })
               }
@@ -238,7 +234,7 @@ function FilterOptions({
   const [search, setSearch] = useState("");
   const selected =
     filterKey === "brand"
-      ? filters.brand.split(",").filter(Boolean)
+      ? filters.brand
       : filterKey === "rating"
         ? filters.rating !== null
           ? [String(filters.rating)]
@@ -272,7 +268,7 @@ function FilterOptions({
                   const next = checked
                     ? [...selected, option]
                     : selected.filter((item) => item !== option);
-                  applyFilters({ brand: next.join(",") });
+                  applyFilters({ brand: next });
                   return;
                 }
                 if (filterKey === "rating") {
@@ -323,7 +319,6 @@ function FilterList({
 }) {
   const filters = [
     { label: "Price", key: "price" },
-    { label: "Category", key: "category" },
     ...extraFilters.map((filter) => ({
       label: filter.label,
       key: filter.key,
@@ -357,9 +352,6 @@ function FilterList({
               }`}
             >
               {filter.key === "price" && <PriceFilter />}
-              {filter.key === "category" && (
-                <CategoryOptions categories={categories} />
-              )}
               {extra && (
                 <FilterOptions
                   filterKey={extra.key}
@@ -380,7 +372,7 @@ export function FilterSectionDesktop({
 }: {
   categories?: string[];
 }) {
-  const [openFilter, setOpenFilter] = useState<string | null>("Category");
+  const [openFilter, setOpenFilter] = useState<string | null>("Price");
   const categoryList = useCategories(categories);
 
   return (

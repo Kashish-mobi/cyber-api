@@ -85,10 +85,7 @@ export const getProducts = createAsyncThunk(
     const skip = (page - 1) * limit;
     const query = `limit=0&${getSortQuery(filters.sortBy)}`;
 
-    const endpoint =
-      filters.category === "all"
-        ? `/products?${query}`
-        : `/products/category/${encodeURIComponent(filters.category)}?${query}`;
+    const endpoint = `/products/category/${encodeURIComponent(filters.category)}?${query}`;
 
     const response = await getData(endpoint);
     const list = filterProducts(

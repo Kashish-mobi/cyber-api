@@ -14,7 +14,7 @@ import {
   type Filters,
 } from "./slices/filterSlice";
 
-import { getProducts, searchProducts, setFiltered } from "./slices/productSlice";
+import { getProducts, setFiltered } from "./slices/productSlice";
 
 export function getFiltersFromUrl() {
   if (typeof window === "undefined") return stringToFilters("");
@@ -29,12 +29,7 @@ export function loadProducts(
   filters: Filters
 ) {
   dispatch(setFiltered(true));
-
-  if (filters.q) {
-    dispatch(searchProducts({ ...filters, limit: PAGE_SIZE }));
-  } else {
-    dispatch(getProducts({ ...filters, limit: PAGE_SIZE }));
-  }
+  dispatch(getProducts({ ...filters, limit: PAGE_SIZE }));
 }
 
 export function useFilters() {
