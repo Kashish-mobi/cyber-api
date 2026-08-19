@@ -40,8 +40,6 @@ type Product = {
   discountPercentage?: number;
 };
 
-// Turn filters into one string for the URL:
-// category=laptops,brand=Apple,brand=Samsung,rating=4
 export function filtersToString(filter: Filters) {
   const parts: string[] = [];
 
