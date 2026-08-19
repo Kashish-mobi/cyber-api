@@ -27,7 +27,8 @@ function Quantity({
       <Button
         variant="icon"
         onClick={() => onChange(Math.max(1, quantity - 1))}
-        className="!h-[24px] !min-h-[24px] !w-[24px] !min-w-[24px]"
+        className="!h-[24px] !min-h-[24px] !w-[24px] !min-w-[24px] disabled:cursor-not-allowed"
+        disabled={quantity <= 1}
       >
         <Minus />
       </Button>
@@ -37,7 +38,8 @@ function Quantity({
       <Button
         variant="icon"
         onClick={() => onChange(quantity + 1)}
-        className="!h-[24px] !min-h-[24px] !w-[24px] !min-w-[24px]"
+        className="!h-[24px] !min-h-[24px] !w-[24px] !min-w-[24px] disabled:cursor-not-allowed"
+        disabled={quantity >= 100}
       >
         <Plus />
       </Button>
