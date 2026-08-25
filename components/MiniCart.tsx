@@ -12,6 +12,7 @@ import { useDispatch, useSelector } from "@/redux/hooks";
 import {
   removeFromCart,
   updateCartQuantity,
+  clearCart,
   type CartItem,
 } from "@/redux/slices/cartSlice";
 
@@ -123,6 +124,7 @@ export function MiniCart({
   simple?: boolean;
   showClose?: boolean;
 }) {
+  const dispatch = useDispatch();
   const products = useSelector((state) => state.cart.cart);
   const router = useRouter();
 
@@ -198,6 +200,13 @@ export function MiniCart({
           className="!h-[48px] !w-full"
           onClick={goToCart}
         />
+        {!simple ? null : (
+        <Button
+          variant="dark"
+          text="Clear Cart"
+          className="mt-[16px] !h-[48px] !w-full"
+          onClick={() => {dispatch(clearCart()); onClose();}}
+        />)}
       </div>
     </div>
   );

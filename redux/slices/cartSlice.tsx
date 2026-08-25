@@ -84,6 +84,11 @@ const cartSlice = createSlice({
       );
     },
 
+    clearCart: (state) => {
+      state.cart = [];
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(state.cart));
+    },
+
     removeFromCart: (
       state,
       action: PayloadAction<number>
@@ -169,15 +174,6 @@ const cartSlice = createSlice({
       state.discountCode = "";
       state.bonusCardNumber = "";
       localStorage.removeItem(DETAILS_KEY);
-    },
-
-    clearCart: (state) => {
-      state.cart = [];
-
-      localStorage.setItem(
-        STORAGE_KEY,
-        JSON.stringify(state.cart)
-      );
     },
   },
 });
