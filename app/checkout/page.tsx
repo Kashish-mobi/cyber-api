@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useSearchParams } from "next/navigation";
 import { Address, Shipping, Payment, Edit, Delete, PlusLine } from "@/icons";
 import Heading from "@/components/ui/Heading";
 import Radio from "@/components/ui/Radio";
@@ -18,7 +19,6 @@ import {
   addAddress,
   deleteAddress,
   formatAddress,
-  resetStep,
   selectAddress,
   setShippingDate,
   setShippingMethod,
@@ -71,6 +71,12 @@ function formatCardNumber(value: string) {
     .trim();
 }
 
+function parseStepParam(value: string | null) {
+  const parsed = Number(value);
+  if (!Number.isFinite(parsed)) return 1;
+  return Math.min(3, Math.max(1, Math.round(parsed)));
+}
+
 function TypeStripe({ type }: { type: string }) {
   return (
     <div className="flex h-[23px] items-center justify-center rounded-[4px] bg-primary px-[8px]">
@@ -84,6 +90,7 @@ function TypeStripe({ type }: { type: string }) {
 export default function CheckoutPage() {
   const dispatch = useDispatch();
   const router = useRouter();
+  const searchParams = useSearchParams();
   const cart = useSelector((state) => state.cart.cart);
   const {
     addresses,
@@ -109,9 +116,32 @@ export default function CheckoutPage() {
   const [paypalEmail, setPaypalEmail] = useState("");
   const [errors, setErrors] = useState<Record<string, string>>({});
 
+  const goToStep = (nextStep: number) => {
+    const clamped = Math.min(3, Math.max(1, nextStep));
+    dispatch(setStep(clamped));
+
+    const params = new URLSearchParams(searchParams.toString());
+    params.set("step", String(clamped));
+    router.replace(`/checkout?${params.toString()}`);
+  };
+
   useEffect(() => {
     setHasMounted(true);
   }, []);
+
+  useEffect(() => {
+    if (!hasMounted) return;
+
+    const rawStep = searchParams.get("step");
+    const urlStep = parseStepParam(rawStep);
+    dispatch(setStep(urlStep));
+
+    if (!rawStep) {
+      const params = new URLSearchParams(searchParams.toString());
+      params.set("step", String(urlStep));
+      router.replace(`/checkout?${params.toString()}`);
+    }
+  }, [hasMounted, searchParams, dispatch, router]);
 
   useEffect(() => {
     if (!hasMounted || thankYou) return;
@@ -179,14 +209,14 @@ export default function CheckoutPage() {
   const handleNext = () => {
     if (!validateStep(step)) return;
     setErrors({});
-    dispatch(setStep(step + 1));
+    goToStep(step + 1);
   };
 
   const handlePay = () => {
     if (!validateStep(3)) return;
     dispatch(clearCart());
     dispatch(clearCodes());
-    dispatch(resetStep());
+    dispatch(setStep(1));
     setThankYou(true);
   };
 
@@ -308,11 +338,10 @@ export default function CheckoutPage() {
                             setEditingAddress(address);
                             setModalOpen(true);
                           }}
-                          className="cursor-pointer"
                         >
                           <Edit />
                         </button>
-                        <button type="button" onClick={() => setDeleteId(address.id)} className="cursor-pointer">
+                        <button type="button" onClick={() => setDeleteId(address.id)}>
                           <Delete />
                         </button>
                       </div>
@@ -515,7 +544,7 @@ export default function CheckoutPage() {
                     router.push("/cart");
                     return;
                   }
-                  dispatch(setStep(Math.max(1, step - 1)));
+                  goToStep(step - 1);
                 }}
               >
                 Back

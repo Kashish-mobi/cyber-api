@@ -80,7 +80,9 @@ export default function CartClient() {
       })
     );
 
-    router.push(`/checkout?total=${total.toFixed(2)}${bonusDiscount > 0 ? "&bonus=5" : ""}`);
+    router.push(
+      `/checkout?total=${total.toFixed(2)}${bonusDiscount > 0 ? "&bonus=5" : ""}&step=1`
+    );
   };
 
   if (products.length === 0) {

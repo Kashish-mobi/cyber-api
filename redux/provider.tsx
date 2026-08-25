@@ -11,12 +11,7 @@ import {
 } from "./slices/userSlice";
 import { setWishlist, loadWishlist } from "./slices/wishlistSlice";
 import { setCart, setCodes, loadCart, loadCodes } from "./slices/cartSlice";
-import {
-  setAddresses,
-  setStep,
-  loadAddresses,
-  loadStep,
-} from "./slices/checkoutSlice";
+import { setAddresses, loadAddresses } from "./slices/checkoutSlice";
 import { store } from "./store";
 
 function LoadSavedData() {
@@ -28,7 +23,6 @@ function LoadSavedData() {
     dispatch(setCart(loadCart()));
     dispatch(setCodes(loadCodes()));
     dispatch(setAddresses(loadAddresses()));
-    dispatch(setStep(loadStep()));
   }, [dispatch]);
 
   // When page loads, restore login from localStorage
