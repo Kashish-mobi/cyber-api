@@ -56,7 +56,7 @@ function ChipList({
         <button
           key={`${chip.key}-${chip.value || chip.label}`}
           type="button"
-          className="flex items-center gap-[6px] rounded-full border border-border-light bg-surface px-[12px] py-[6px] text-[12px] font-[500] capitalize"
+          className="flex shrink-0 items-center gap-[6px] whitespace-nowrap rounded-full border border-border-light bg-surface px-[12px] py-[6px] text-[12px] font-[500] capitalize"
           onClick={() => onRemove(chip.key, chip.value)}
         >
           {chip.label}
@@ -70,7 +70,7 @@ function ChipList({
       ))}
       <button
         type="button"
-        className="flex items-center gap-[6px] rounded-full border border-red-200 bg-red-50 px-[12px] py-[6px] text-[12px] font-[500] text-red-600 hover:bg-red-100"
+        className="flex shrink-0 items-center gap-[6px] whitespace-nowrap rounded-full border border-red-200 bg-red-50 px-[12px] py-[6px] text-[12px] font-[500] text-red-600 hover:bg-red-100"
         onClick={onClearAll}
       >
         Clear all
@@ -222,7 +222,7 @@ export default function ProductsClient({
               chips={chips}
               onRemove={removeChip}
               onClearAll={handleClearAll}
-              className="relative z-0 flex w-full overflow-x-scroll gap-[8px] lg:hidden"
+              className="relative z-0 flex w-full flex-wrap gap-[8px] lg:hidden"
             />
             <div className="pt-[28px] lg:hidden">
               <Paragraph
