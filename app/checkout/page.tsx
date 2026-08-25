@@ -18,9 +18,11 @@ import {
   addAddress,
   deleteAddress,
   formatAddress,
+  resetStep,
   selectAddress,
   setShippingDate,
   setShippingMethod,
+  setStep,
   updateAddress,
   type Address as AddressType,
 } from "@/redux/slices/checkoutSlice";
@@ -88,10 +90,10 @@ export default function CheckoutPage() {
     selectedAddressId,
     shippingMethodId,
     shippingDate,
+    step,
   } = useSelector((state) => state.checkout);
 
   const [hasMounted, setHasMounted] = useState(false);
-  const [step, setStep] = useState(1);
   const [thankYou, setThankYou] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
   const [editingAddress, setEditingAddress] = useState<AddressType | null>(null);
@@ -177,13 +179,14 @@ export default function CheckoutPage() {
   const handleNext = () => {
     if (!validateStep(step)) return;
     setErrors({});
-    setStep((current) => current + 1);
+    dispatch(setStep(step + 1));
   };
 
   const handlePay = () => {
     if (!validateStep(3)) return;
     dispatch(clearCart());
     dispatch(clearCodes());
+    dispatch(resetStep());
     setThankYou(true);
   };
 
@@ -305,10 +308,11 @@ export default function CheckoutPage() {
                             setEditingAddress(address);
                             setModalOpen(true);
                           }}
+                          className="cursor-pointer"
                         >
                           <Edit />
                         </button>
-                        <button type="button" onClick={() => setDeleteId(address.id)}>
+                        <button type="button" onClick={() => setDeleteId(address.id)} className="cursor-pointer">
                           <Delete />
                         </button>
                       </div>
@@ -511,7 +515,7 @@ export default function CheckoutPage() {
                     router.push("/cart");
                     return;
                   }
-                  setStep((current) => Math.max(1, current - 1));
+                  dispatch(setStep(Math.max(1, step - 1)));
                 }}
               >
                 Back

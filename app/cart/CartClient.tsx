@@ -264,7 +264,7 @@ export default function CartClient() {
                 </div>
 
                 {/* BONUS DISCOUNT */}
-                {bonusDiscount > 0 && (
+                {bonusDiscount > 0 ?(
                   <div className="flex justify-between rounded-[8px] bg-green-50 px-[12px] py-[8px]">
                     <Paragraph
                       as="p"
@@ -281,6 +281,24 @@ export default function CartClient() {
                       −${discountAmount.toFixed(2)}
                     </Paragraph>
                   </div>
+                ):
+                (
+                  <div className="flex justify-between rounded-[8px] bg-red-50 px-[12px] py-[8px]">
+                  <Paragraph
+                    as="p"
+                    type="cartTotal"
+                    className="!text-red-600 !font-[500]"
+                  >
+                    Bonus discount 
+                  </Paragraph>
+                  <Paragraph
+                    as="p"
+                    type="cartTotal"
+                    className="!text-red-600 !font-[500]"
+                  >
+                    −${discountAmount.toFixed(2)}
+                  </Paragraph>
+                </div>
                 )}
 
                 {/* TOTAL */}

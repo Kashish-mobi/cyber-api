@@ -4,7 +4,6 @@ import { useEffect, useState } from "react";
 import Button from "./ui/Button";
 import Heading from "./ui/Heading";
 import Input from "./ui/Input";
-import Paragraph from "./ui/Paragraph";
 import type { Address } from "@/redux/slices/checkoutSlice";
 
 type AddressForm = Omit<Address, "id">;
@@ -147,9 +146,6 @@ export default function AddressModal({
             Save
           </Button>
         </div>
-        <Paragraph type="cart" className="mt-[12px] !text-muted-nav">
-          Saved on this device only.
-        </Paragraph>
       </div>
     </div>
   );

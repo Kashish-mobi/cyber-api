@@ -16,9 +16,11 @@ type CheckoutState = {
   selectedAddressId: number | null;
   shippingMethodId: number;
   shippingDate: string;
+  step: number;
 };
 
 const STORAGE_KEY = "checkoutAddresses";
+const STEP_KEY = "checkoutStep";
 
 const defaultAddresses: Address[] = [
   {
@@ -63,11 +65,25 @@ export function loadAddresses(): Address[] {
   }
 }
 
+function saveStep(step: number) {
+  localStorage.setItem(STEP_KEY, String(step));
+}
+
+export function loadStep(): number {
+  const raw = localStorage.getItem(STEP_KEY);
+  if (!raw) return 1;
+
+  const step = Number(raw);
+  if (!Number.isFinite(step) || step < 1 || step > 3) return 1;
+  return step;
+}
+
 const initialState: CheckoutState = {
   addresses: defaultAddresses,
   selectedAddressId: 1,
   shippingMethodId: 1,
   shippingDate: "",
+  step: 1,
 };
 
 const checkoutSlice = createSlice({
@@ -113,6 +129,15 @@ const checkoutSlice = createSlice({
     setShippingDate: (state, action: PayloadAction<string>) => {
       state.shippingDate = action.payload;
     },
+    setStep: (state, action: PayloadAction<number>) => {
+      const step = Math.min(3, Math.max(1, action.payload));
+      state.step = step;
+      saveStep(step);
+    },
+    resetStep: (state) => {
+      state.step = 1;
+      saveStep(1);
+    },
   },
 });
 
@@ -124,6 +149,8 @@ export const {
   deleteAddress,
   setShippingMethod,
   setShippingDate,
+  setStep,
+  resetStep,
 } = checkoutSlice.actions;
 
 export default checkoutSlice.reducer;
