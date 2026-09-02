@@ -5,11 +5,11 @@ import { useRouter } from "nextjs-toploader/app";
 import { useDispatch, useSelector } from "./hooks";
 
 import {
-  filtersToString,
-  filtersToUrl,
+  defaultFilters,
+  filtersToQueryString,
+  filtersFromSearchParams,
   removeFilter,
   setFilters,
-  stringToFilters,
   PAGE_SIZE,
   type Filters,
 } from "./slices/filterSlice";
@@ -17,11 +17,9 @@ import {
 import { getProducts, setFiltered } from "./slices/productSlice";
 
 export function getFiltersFromUrl() {
-  if (typeof window === "undefined") return stringToFilters("");
+  if (typeof window === "undefined") return { ...defaultFilters };
 
-  const params = new URLSearchParams(window.location.search);
-
-  return stringToFilters(params.get("filter"));
+  return filtersFromSearchParams(new URLSearchParams(window.location.search));
 }
 
 export function loadProducts(
@@ -48,7 +46,7 @@ export function useFilters() {
 
     dispatch(setFilters(newFilters));
 
-    const query = filtersToUrl(newFilters);
+    const query = filtersToQueryString(newFilters);
     const url = query ? `/products?${query}` : "/products";
 
     if (pathname === "/products") {
@@ -67,6 +65,6 @@ export function useFilters() {
     filters,
     applyFilters,
     removeChip,
-    filterText: filtersToString(filters),
+    queryString: filtersToQueryString(filters),
   };
 }

@@ -6,7 +6,7 @@ import Paragraph from "@/components/ui/Paragraph";
 import Button from "@/components/ui/Button";
 import AppImage from "@/components/ui/Image";
 import { addToWishlist, removeFromWishlist } from "@/redux/slices/wishlistSlice";
-import { addToCart, removeFromCart } from "@/redux/slices/cartSlice";
+import { removeFromCart } from "@/redux/slices/cartSlice";
 import {
   ScreenSize,
   CPU,
@@ -21,7 +21,8 @@ import {
 } from "@/icons";
 import { cn } from "@/lib/cn";
 import { useDispatch, useSelector } from "@/redux/hooks";
-import { useRouter } from "nextjs-toploader/app";
+import { useAddToCart } from "@/hooks/useAddToCart";
+import { useCurrency } from "@/hooks/useCurrency";
 
 const iconMap = {
   ScreenSize,
@@ -102,6 +103,7 @@ function ProductGallery({ images, thumbnail, name, isInWishlist, onWishlist }) {
 function InfoCard({ product }) {
   const [selectedStorage, setSelectedStorage] = useState(product.selectedStorage);
   const [selectedColor, setSelectedColor] = useState(product.selectedColor);
+  const { currencySign } = useCurrency();
 
   return (
     <div className="flex flex-col gap-[24px]">
@@ -112,12 +114,10 @@ function InfoCard({ product }) {
       <div className="flex flex-col gap-[16px]">
         <div className="flex gap-[13px] items-center">
           <Paragraph type="productPrice">
-            {product.currency}
-            {product.price.toFixed(2)}
+            {currencySign(product.price)}
           </Paragraph>
           <Paragraph type="productOriginalPrice">
-            {product.currency}
-            {product.originalPrice.toFixed(2)}
+            {currencySign(product.originalPrice)}
           </Paragraph>
         </div>
 
@@ -195,7 +195,7 @@ export default function ProductPurchase({ product }) {
   const wishlist = useSelector((state) => state.wishlist.wishlist);
   const cart = useSelector((state) => state.cart.cart);
   const dispatch = useDispatch();
-  const router = useRouter();
+  const { tryAddToCart } = useAddToCart();
   useEffect(() => {
     setHasMounted(true);
   }, []);
@@ -218,16 +218,13 @@ export default function ProductPurchase({ product }) {
       return;
     }
 
-    dispatch(
-      addToCart({
-        id: Number(product.id),
-        title: product.name,
-        price: product.price,
-        thumbnail: product.thumbnail,
-        quantity: 1,
-      })
-    );
-    router.push("/cart");
+    tryAddToCart({
+      id: Number(product.id),
+      title: product.name,
+      price: product.price,
+      thumbnail: product.thumbnail,
+      quantity: 1,
+    });
   };
 
   return (

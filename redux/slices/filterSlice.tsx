@@ -1,6 +1,6 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { currencySign } from "@/lib/currency";
 
-export const DEFAULT_CATEGORY = "smartphones";
 export const DEFAULT_SORT = "rating-desc";
 export const MIN_PRICE = 0;
 export const MAX_PRICE = 5000;
@@ -21,7 +21,7 @@ export type Filters = {
 
 export const defaultFilters: Filters = {
   q: "",
-  category: DEFAULT_CATEGORY,
+  category: "",
   page: 1,
   sortBy: DEFAULT_SORT,
   minPrice: null,
@@ -40,70 +40,100 @@ type Product = {
   discountPercentage?: number;
 };
 
-export function filtersToString(filter: Filters) {
-  const parts: string[] = [];
-
-  if (filter.q) parts.push(`q=${encodeURIComponent(filter.q)}`);
-  if (filter.sortBy && filter.sortBy !== DEFAULT_SORT) {
-    parts.push(`sortBy=${filter.sortBy}`);
-  }
-  if (filter.page > 1) parts.push(`page=${filter.page}`);
-  if (filter.minPrice !== null) parts.push(`minPrice=${filter.minPrice}`);
-  if (filter.maxPrice !== null) parts.push(`maxPrice=${filter.maxPrice}`);
-  filter.brand.forEach((brand) => parts.push(`brand=${encodeURIComponent(brand)}`));
-  if (filter.rating !== null) parts.push(`rating=${filter.rating}`);
-  if (filter.availability) parts.push(`availability=${filter.availability}`);
-  if (filter.discount !== null) parts.push(`discount=${filter.discount}`);
-
-  return parts.join(",");
+function formatCategory(slug: string) {
+  return slug
+    .replace(/-/g, " ")
+    .replace(/\b\w/g, (letter) => letter.toUpperCase());
 }
 
-export function stringToFilters(value?: string | null): Filters {
-  const filter: Filters = { ...defaultFilters };
-  if (!value) return filter;
+// Build URL like: ?q=apple&category=smartphones&sortBy=price-asc&brand=Apple
+export function filtersToQueryString(filters: Filters) {
+  const params = new URLSearchParams();
 
-  value.split(",").forEach((part) => {
-    const eq = part.indexOf("=");
-    if (eq < 1) return;
+  if (filters.q) params.set("q", filters.q);
+  if (filters.category) params.set("category", filters.category);
+  if (filters.sortBy && filters.sortBy !== DEFAULT_SORT) {
+    params.set("sortBy", filters.sortBy);
+  }
+  if (filters.page > 1) params.set("page", String(filters.page));
+  if (filters.minPrice !== null) params.set("minPrice", String(filters.minPrice));
+  if (filters.maxPrice !== null) params.set("maxPrice", String(filters.maxPrice));
+  filters.brand.forEach((brand) => params.append("brand", brand));
+  if (filters.rating !== null) params.set("rating", String(filters.rating));
+  if (filters.availability) params.set("availability", filters.availability);
+  if (filters.discount !== null) params.set("discount", String(filters.discount));
 
-    const key = part.slice(0, eq);
-    const raw = decodeURIComponent(part.slice(eq + 1));
+  return params.toString();
+}
 
-    if (key === "q") filter.q = raw;
-    if (key === "sortBy") filter.sortBy = raw;
-    if (key === "page") {
-      const page = Number(raw);
-      filter.page = page > 0 ? page : 1;
+// Read filters back from URL search params
+export function filtersFromSearchParams(searchParams: URLSearchParams): Filters {
+  const filters: Filters = { ...defaultFilters };
+
+  const q = searchParams.get("q");
+  if (q) filters.q = q;
+
+  const category = searchParams.get("category");
+  if (category) filters.category = category;
+
+  const sortBy = searchParams.get("sortBy");
+  if (sortBy) filters.sortBy = sortBy;
+
+  const pageRaw = searchParams.get("page");
+  if (pageRaw !== null) {
+    const page = Number(pageRaw);
+    if (page > 0) filters.page = page;
+  }
+
+  const minPriceRaw = searchParams.get("minPrice");
+  if (minPriceRaw !== null) {
+    const minPrice = Number(minPriceRaw);
+    if (!Number.isNaN(minPrice)) filters.minPrice = minPrice;
+  }
+
+  const maxPriceRaw = searchParams.get("maxPrice");
+  if (maxPriceRaw !== null) {
+    const maxPrice = Number(maxPriceRaw);
+    if (!Number.isNaN(maxPrice)) filters.maxPrice = maxPrice;
+  }
+
+  filters.brand = searchParams.getAll("brand");
+
+  const ratingRaw = searchParams.get("rating");
+  if (ratingRaw !== null) {
+    const rating = Number(ratingRaw);
+    if (!Number.isNaN(rating)) filters.rating = rating;
+  }
+
+  const availability = searchParams.get("availability");
+  if (availability) filters.availability = availability;
+
+  const discountRaw = searchParams.get("discount");
+  if (discountRaw !== null) {
+    const discount = Number(discountRaw);
+    if (!Number.isNaN(discount)) filters.discount = discount;
+  }
+
+  return filters;
+}
+
+export function paramsToSearchParams(
+  params: Record<string, string | string[] | undefined>
+) {
+  const searchParams = new URLSearchParams();
+
+  Object.entries(params).forEach(([key, value]) => {
+    if (!value) return;
+
+    if (Array.isArray(value)) {
+      value.forEach((item) => searchParams.append(key, item));
+      return;
     }
-    if (key === "minPrice") {
-      const amount = Number(raw);
-      filter.minPrice = Number.isNaN(amount) ? null : amount;
-    }
-    if (key === "maxPrice") {
-      const amount = Number(raw);
-      filter.maxPrice = Number.isNaN(amount) ? null : amount;
-    }
-    if (key === "brand") {
-      filter.brand = [...filter.brand, raw];
-    }
-    if (key === "rating") {
-      const amount = Number(raw);
-      filter.rating = Number.isNaN(amount) ? null : amount;
-    }
-    if (key === "availability") filter.availability = raw;
-    if (key === "discount") {
-      const amount = Number(raw);
-      filter.discount = Number.isNaN(amount) ? null : amount;
-    }
+
+    searchParams.set(key, value);
   });
 
-  return filter;
-}
-
-export function filtersToUrl(filter: Filters) {
-  const value = filtersToString(filter);
-  if (!value) return "";
-  return `filter=${encodeURIComponent(value)}`;
+  return searchParams;
 }
 
 export function filterProducts<T extends Product>(
@@ -155,6 +185,7 @@ export function removeFilter(
   const next = { ...filters, page: 1 };
 
   if (key === "q") next.q = "";
+  if (key === "category") next.category = "";
   if (key === "price") {
     next.minPrice = null;
     next.maxPrice = null;
@@ -169,14 +200,21 @@ export function removeFilter(
   return next;
 }
 
-export function getChips(filters: Filters): Chip[] {
+export function getChips(
+  filters: Filters,
+  showPrice?: (price: number) => string
+): Chip[] {
   const chips: Chip[] = [];
+  const format = showPrice ?? ((price: number) => currencySign(price, "dollar"));
 
   if (filters.q) chips.push({ key: "q", label: `Search: ${filters.q}` });
+  if (filters.category) {
+    chips.push({ key: "category", label: formatCategory(filters.category) });
+  }
   if (filters.minPrice !== null || filters.maxPrice !== null) {
     chips.push({
       key: "price",
-      label: `$${filters.minPrice ?? MIN_PRICE} - $${filters.maxPrice ?? MAX_PRICE}`,
+      label: `${format(filters.minPrice ?? MIN_PRICE)} - ${format(filters.maxPrice ?? MAX_PRICE)}`,
     });
   }
   filters.brand.forEach((brand) => {

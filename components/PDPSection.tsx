@@ -32,7 +32,6 @@ export default function PDPSection() {
               price={product.price}
               thumbnail={product.thumbnail}
               buttonText={productsData.buyNowLabel ?? ui.buyNow}
-              currencySymbol={ui.currencySymbol}
             />
           ))}
         </ProductGrid>

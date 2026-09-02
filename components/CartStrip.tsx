@@ -14,6 +14,7 @@ import {
   type CartItem,
 } from "@/redux/slices/cartSlice";
 import ConfirmBox from "./ui/ConfirmBox";
+import { useCurrency } from "@/hooks/useCurrency";
 
 const QuantitySelector = ({
   quantity,
@@ -48,13 +49,18 @@ const QuantitySelector = ({
 export default function CartStrip({
   product,
   isLast,
+  onRemove,
+  onQuantityChange,
 }: {
   product: CartItem;
   isLast: boolean;
+  onRemove?: (productId: number) => void;
+  onQuantityChange?: (productId: number, quantity: number) => void;
 }) {
   const dispatch = store.dispatch;
   const router = useRouter();
   const [confirmOpen, setConfirmOpen] = useState(false);
+  const { currencySign } = useCurrency();
   const lineTotal = product.price * product.quantity;
 
   const goToProduct = () => {
@@ -92,13 +98,17 @@ export default function CartStrip({
       >
         <QuantitySelector
           quantity={product.quantity}
-          onChange={(quantity) =>
-            dispatch(updateCartQuantity({ id: product.id, quantity }))
-          }
+          onChange={(quantity) => {
+            if (onQuantityChange) {
+              onQuantityChange(product.id, quantity);
+            } else {
+              dispatch(updateCartQuantity({ id: product.id, quantity }));
+            }
+          }}
         />
 
         <Heading as="h3" variant="cartTotal">
-          ${lineTotal.toFixed(2)}
+          {currencySign(lineTotal)}
         </Heading>
 
         <Button variant="icon" className="!p-0 border-0">
@@ -112,7 +122,11 @@ export default function CartStrip({
         message={`Are you sure you want to remove ${product.title} from your cart?`}
         onNo={() => setConfirmOpen(false)}
         onYes={() => {
-          dispatch(removeFromCart(product.id));
+          if (onRemove) {
+            onRemove(product.id);
+          } else {
+            dispatch(removeFromCart(product.id));
+          }
           setConfirmOpen(false);
         }}
       />

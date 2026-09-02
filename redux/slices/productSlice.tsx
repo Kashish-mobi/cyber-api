@@ -3,7 +3,7 @@ import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import {
   defaultFilters,
   filterProducts,
-  filtersToString,
+  filtersToQueryString,
   PAGE_SIZE,
   type Filters,
 } from "./filterSlice";
@@ -85,7 +85,9 @@ export const getProducts = createAsyncThunk(
     const skip = (page - 1) * limit;
     const query = `limit=0&${getSortQuery(filters.sortBy)}`;
 
-    const endpoint = `/products/category/${encodeURIComponent(filters.category)}?${query}`;
+    const endpoint = filters.category
+      ? `/products/category/${encodeURIComponent(filters.category)}?${query}`
+      : `/products?${query}`;
 
     const response = await getData(endpoint);
     const list = filterProducts(
@@ -99,7 +101,7 @@ export const getProducts = createAsyncThunk(
       page,
       limit,
       sortBy: filters.sortBy,
-      filter: filtersToString(filters),
+      filter: filtersToQueryString(filters),
     };
   }
 );
@@ -125,7 +127,7 @@ export const searchProducts = createAsyncThunk(
       page,
       limit,
       sortBy: filters.sortBy,
-      filter: filtersToString(filters),
+      filter: filtersToQueryString(filters),
     };
   }
 );

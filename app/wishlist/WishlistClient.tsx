@@ -98,7 +98,6 @@ export default function WishlistClient() {
             price={product.price}
             thumbnail={product.thumbnail}
             buttonText="Add to Cart"
-            currencySymbol="$"
           />
         ))}
       </div>

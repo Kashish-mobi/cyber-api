@@ -9,9 +9,10 @@ import { useEffect, useState } from "react";
 import { useRouter } from "nextjs-toploader/app";
 import { useDispatch, useSelector } from "@/redux/hooks";
 import { addToWishlist, removeFromWishlist } from "@/redux/slices/wishlistSlice";
-import { addToCart, removeFromCart } from "@/redux/slices/cartSlice";
-import { MiniCartModal } from "../MiniCart";
+import { removeFromCart } from "@/redux/slices/cartSlice";
 import ConfirmBox from "./ConfirmBox";
+import { useCurrency } from "@/hooks/useCurrency";
+import { useAddToCart } from "@/hooks/useAddToCart";
 
 const cardStyles = {
   root: "relative flex h-full w-full cursor-pointer flex-col items-center rounded-[8px] bg-surface-card px-[12px] pt-[63px] pb-[24px] md:px-[16px] 2xl:pt-[70px] 2xl:pb-[24px]",
@@ -35,7 +36,6 @@ export type ProductCardProps = {
   price: number;
   thumbnail: string;
   buttonText: string;
-  currencySymbol?: string;
 };
 
 export default function ProductCard({
@@ -45,15 +45,15 @@ export default function ProductCard({
   title2 = "",
   price,
   thumbnail,
-  currencySymbol = "$",
 }: ProductCardProps) {
   const [hasMounted, setHasMounted] = useState(false);
-  const [cartOpen, setCartOpen] = useState(false);
   const [confirmOpen, setConfirmOpen] = useState(false);
   const wishlist = useSelector((state) => state.wishlist.wishlist);
   const cart = useSelector((state) => state.cart.cart);
   const dispatch = useDispatch();
   const router = useRouter();
+  const { currencySign } = useCurrency();
+  const { tryAddToCart } = useAddToCart();
 
   useEffect(() => {
     setHasMounted(true);
@@ -91,16 +91,13 @@ export default function ProductCard({
       setConfirmOpen(true);
       return;
     }
-    dispatch(
-      addToCart({
-        id: Number(id),
-        title,
-        price,
-        thumbnail,
-        quantity: 1,
-      })
-    );
-    setCartOpen(true);
+    tryAddToCart({
+      id: Number(id),
+      title,
+      price,
+      thumbnail,
+      quantity: 1,
+    });
   };
 
   return (
@@ -131,8 +128,7 @@ export default function ProductCard({
 
       <div className={cardStyles.priceWrap}>
         <Paragraph type="price" className="text-center text-primary">
-          {currencySymbol}
-          {price}
+          {currencySign(price)}
         </Paragraph>
       </div>
 
@@ -143,7 +139,6 @@ export default function ProductCard({
         onClick={handleCart}
       />
 
-      <MiniCartModal open={cartOpen} onClose={() => setCartOpen(false)} />
       <ConfirmBox
         open={confirmOpen}
         title="Remove from cart?"

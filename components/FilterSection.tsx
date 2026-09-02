@@ -13,9 +13,8 @@ import Paragraph from "./ui/Paragraph";
 import Input from "./ui/Input";
 import { Search } from "@/icons";
 import { useFilters } from "@/redux/useFilters";
-import { DEFAULT_CATEGORY, MAX_PRICE, MIN_PRICE } from "@/redux/slices/filterSlice";
-import { useDispatch, useSelector } from "@/redux/hooks";
-import { getCategories } from "@/redux/slices/productSlice";
+import { MAX_PRICE, MIN_PRICE } from "@/redux/slices/filterSlice";
+import { useSelector } from "@/redux/hooks";
 
 const extraFilters = [
   {
@@ -207,7 +206,7 @@ function CategoryOptions({ categories }: { categories: string[] }) {
               checked={isChecked(option)}
               onChange={(checked) =>
                 applyFilters({
-                  category: checked ? option : DEFAULT_CATEGORY,
+                  category: checked ? option : "",
                   q: checked ? "" : filters.q,
                 })
               }
@@ -295,12 +294,7 @@ function FilterOptions({
 }
 
 function useCategories(serverCategories: string[] = []) {
-  const dispatch = useDispatch();
   const storedCategories = useSelector((state) => state.products.categories);
-
-  useEffect(() => {
-    dispatch(getCategories());
-  }, [dispatch]);
 
   if (serverCategories.length > 0) return serverCategories;
   return Array.isArray(storedCategories) ? storedCategories : [];
@@ -318,6 +312,7 @@ function FilterList({
   allowClosePrice?: boolean;
 }) {
   const filters = [
+    { label: "Category", key: "category" },
     { label: "Price", key: "price" },
     ...extraFilters.map((filter) => ({
       label: filter.label,
@@ -351,6 +346,9 @@ function FilterList({
                 isOpen ? "max-h-[600px] opacity-100" : "max-h-0 opacity-0"
               }`}
             >
+              {filter.key === "category" && (
+                <CategoryOptions categories={categories} />
+              )}
               {filter.key === "price" && <PriceFilter />}
               {extra && (
                 <FilterOptions

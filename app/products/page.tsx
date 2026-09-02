@@ -2,7 +2,12 @@ import type { Metadata } from "next";
 import ProductsClient from "./ProductsClient";
 import { store } from "@/redux/store";
 import { getProducts, searchProducts } from "@/redux/slices/productSlice";
-import { stringToFilters, PAGE_SIZE, setFilters } from "@/redux/slices/filterSlice";
+import {
+  filtersFromSearchParams,
+  paramsToSearchParams,
+  PAGE_SIZE,
+  setFilters,
+} from "@/redux/slices/filterSlice";
 import { getData } from "@/api/api";
 
 export const metadata: Metadata = {
@@ -12,14 +17,12 @@ export const metadata: Metadata = {
 };
 
 type Props = {
-  searchParams: Promise<{
-    filter?: string;
-  }>;
+  searchParams: Promise<Record<string, string | string[] | undefined>>;
 };
 
 export default async function ProductsPage({ searchParams }: Props) {
   const params = await searchParams;
-  const filters = stringToFilters(params.filter);
+  const filters = filtersFromSearchParams(paramsToSearchParams(params));
   store.dispatch(setFilters(filters));
 
   let products: Array<{

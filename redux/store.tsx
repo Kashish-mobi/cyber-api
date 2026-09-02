@@ -6,6 +6,8 @@ import filterReducer from "./slices/filterSlice";
 import cartReducer from "./slices/cartSlice";
 import checkoutReducer from "./slices/checkoutSlice";
 import wishlistReducer from "./slices/wishlistSlice";
+import currencyReducer from "./slices/currencySlice";
+import cartUiReducer from "./slices/cartUiSlice";
 
 export const store = configureStore({
   reducer: {
@@ -14,8 +16,10 @@ export const store = configureStore({
     products: productReducer,
     filters: filterReducer,
     cart: cartReducer,
+    cartUi: cartUiReducer,
     checkout: checkoutReducer,
     wishlist: wishlistReducer,
+    currency: currencyReducer,
   },
 });
 

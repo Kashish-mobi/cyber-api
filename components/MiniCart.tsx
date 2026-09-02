@@ -15,6 +15,8 @@ import {
   clearCart,
   type CartItem,
 } from "@/redux/slices/cartSlice";
+import { clearApiCart, MINI_CART_LIMIT } from "@/lib/cartApi";
+import { useCurrency } from "@/hooks/useCurrency";
 
 function Quantity({
   quantity,
@@ -60,12 +62,14 @@ function CartRow({
   const dispatch = useDispatch();
   const router = useRouter();
   const [confirmOpen, setConfirmOpen] = useState(false);
+  const { currencySign } = useCurrency();
+  const lineTotal = product.price * product.quantity;
 
   return (
-    <div className="flex items-center gap-[12px] border-b border-border-light py-[12px] last:border-b-0">
+    <div className="flex items-center gap-[10px] border-b border-border-light py-[12px] last:border-b-0">
       <button
         type="button"
-        className="flex min-w-0 flex-1 items-center gap-[12px] text-left"
+        className="flex min-w-0 flex-1 items-center gap-[10px] text-left"
         onClick={() => {
           onClose();
           router.push(`/products/${product.id}`);
@@ -74,21 +78,35 @@ function CartRow({
         <AppImage
           src={product.thumbnail}
           alt={product.title}
-          width={56}
-          height={56}
-          className="h-[56px] w-[56px] shrink-0 object-contain"
+          width={48}
+          height={48}
+          className="h-[48px] w-[48px] shrink-0 object-contain"
         />
-        <Heading as="h3" variant="card" className="!text-left line-clamp-2">
+        <Heading
+          as="h3"
+          variant="card"
+          className="!text-left !text-[13px] !leading-[18px] line-clamp-2"
+        >
           {product.title}
         </Heading>
       </button>
 
-      <Quantity
-        quantity={product.quantity}
-        onChange={(quantity) =>
-          dispatch(updateCartQuantity({ id: product.id, quantity }))
-        }
-      />
+      <div className="shrink-0">
+        <Quantity
+          quantity={product.quantity}
+          onChange={(quantity) =>
+            dispatch(updateCartQuantity({ id: product.id, quantity }))
+          }
+        />
+      </div>
+
+      <Paragraph
+        as="span"
+        type="cartQuantity"
+        className="min-w-[100px] shrink-0 text-right !text-[13px] px-[10px]"
+      >
+        {currencySign(lineTotal)}
+      </Paragraph>
 
       {showRemove ? (
         <>
@@ -126,12 +144,10 @@ export function MiniCart({
 }) {
   const dispatch = useDispatch();
   const products = useSelector((state) => state.cart.cart);
-  const router = useRouter();
 
-  const goToCart = () => {
-    onClose();
-    router.push("/cart");
-  };
+  // show only 5 in dropdown — rest on /cart page
+  const visibleItems = products.slice(0, MINI_CART_LIMIT);
+  const moreCount = products.length - MINI_CART_LIMIT;
 
   if (products.length === 0) {
     return (
@@ -156,7 +172,10 @@ export function MiniCart({
           variant="solid"
           text="View Cart"
           className="mt-[16px] !h-[48px] !w-full"
-          onClick={goToCart}
+          onClick={(e) => {
+            e.stopPropagation();
+            window.location.assign("/cart");
+          }}
         />
       </div>
     );
@@ -183,30 +202,44 @@ export function MiniCart({
       ) : null}
 
       <div className="flex-1 overflow-y-auto px-[16px]">
-        {products.map((product) => (
+        {visibleItems.map((product, index) => (
           <CartRow
-            key={product.id}
+            key={`${product.id}-${index}`}
             product={product}
             onClose={onClose}
             showRemove={!simple}
           />
         ))}
+        {moreCount > 0 ? (
+          <Paragraph type="body" className="py-[12px] text-center !text-muted-nav">
+            +{moreCount} more — view full cart
+          </Paragraph>
+        ) : null}
       </div>
 
       <div className="border-t border-border-light p-[16px]">
         <Button
           variant="solid"
-          text="View Cart"
+          text={moreCount > 0 ? `View Cart (${products.length})` : "View Cart"}
           className="!h-[48px] !w-full"
-          onClick={goToCart}
+          onClick={(e) => {
+            e.stopPropagation();
+            window.location.assign("/cart");
+          }}
         />
-        {!simple ? null : (
-        <Button
-          variant="dark"
-          text="Clear Cart"
-          className="mt-[16px] !h-[48px] !w-full"
-          onClick={() => {dispatch(clearCart()); onClose();}}
-        />)}
+        {simple ? (
+          <Button
+            variant="dark"
+            text="Clear Cart"
+            className="mt-[16px] !h-[48px] !w-full"
+            onClick={(e) => {
+              e.stopPropagation();
+              dispatch(clearCart());
+              clearApiCart();
+              onClose();
+            }}
+          />
+        ) : null}
       </div>
     </div>
   );

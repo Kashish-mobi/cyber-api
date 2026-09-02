@@ -15,14 +15,12 @@ type DiscountedSectionProps = {
   title: string;
   items: DiscountedProduct[];
   buttonText?: string;
-  currencySymbol?: string;
 };
 
 export default function DiscountedSection({
   title,
   items,
   buttonText = "View Product",
-  currencySymbol = "$",
 }: DiscountedSectionProps) {
   return (
     <div className="w-full flex items-center justify-center">
@@ -42,7 +40,6 @@ export default function DiscountedSection({
               price={product.price}
               thumbnail={product.thumbnail}
               buttonText={buttonText}
-              currencySymbol={currencySymbol}
             />
           ))}
         </ProductGrid>

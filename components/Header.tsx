@@ -8,62 +8,205 @@ import { getIcon, type IconName } from "@/lib/icons";
 import Paragraph from "./ui/Paragraph";
 import SearchBox from "./ui/SearchBox";
 import { useDispatch, useSelector } from "@/redux/hooks";
-import { clearLogin, logout } from "@/redux/slices/userSlice";
-import { MiniCart, MiniCartModal } from "./MiniCart";
+import { clearLogin, loadLogin, logout } from "@/redux/slices/userSlice";
+import { MiniCart } from "./MiniCart";
+import CartLoginForm from "./CartLoginForm";
+import DropDown from "./ui/DropDown";
+import Heading from "./ui/Heading";
+import { useCurrency } from "@/hooks/useCurrency";
+import { currencySymbols, type Currency } from "@/lib/currency";
+import { addToCart, clearCart } from "@/redux/slices/cartSlice";
+import { apiAddProduct, clearApiCart } from "@/lib/cartApi";
+import {
+  toggleCartDropdown,
+  closeCartDropdown,
+  openCartDropdown,
+  showAddedToCart,
+  clearPendingItem,
+} from "@/redux/slices/cartUiSlice";
 
 const { header, ui } = homepage;
 
-function CartMenu() {
+const currencyMenu = [
+  { id: "dollar" as Currency, sign: currencySymbols.dollar },
+  { id: "rupee" as Currency, sign: currencySymbols.rupee },
+  { id: "euro" as Currency, sign: currencySymbols.euro },
+];
+
+function CurrencyMenu({ className }: { className?: string }) {
+  const { currency, changeCurrency } = useCurrency();
+  const selectedSign =
+    currencyMenu.find((item) => item.id === currency)?.sign ?? "$";
+
+  return (
+    <DropDown
+      options={currencyMenu.map((item) => item.sign)}
+      selected={selectedSign}
+      className={className || "w-[72px] lg:min-w-[72px]"}
+      onSelect={(sign) => {
+        const selected = currencyMenu.find((item) => item.sign === sign);
+        if (selected) changeCurrency(selected.id);
+      }}
+    />
+  );
+}
+
+function AddedToCartMessage() {
+  return (
+    <div className="p-[20px] text-center">
+      <Heading as="h3" variant="cartTitle">
+        Added to cart!
+      </Heading>
+      <Paragraph className="mt-[8px] !text-muted-nav">
+        Your item was added successfully.
+      </Paragraph>
+    </div>
+  );
+}
+
+// Only the cart icon button (safe to use in desktop / tablet / mobile)
+function CartButton() {
+  const dispatch = useDispatch();
   const cart = useSelector((state) => state.cart.cart);
-  const [open, setOpen] = useState(false);
+  const open = useSelector((state) => state.cartUi.open);
   const [hasMounted, setHasMounted] = useState(false);
-  const menuRef = useRef<HTMLDivElement>(null);
-  const cartCount = hasMounted
-    ? cart.reduce((sum, item) => sum + item.quantity, 0)
-    : 0;
 
   useEffect(() => {
     setHasMounted(true);
   }, []);
 
-  useEffect(() => {
-    function handleClickOutside(e: MouseEvent) {
-      if (menuRef.current && !menuRef.current.contains(e.target as Node)) {
-        setOpen(false);
-      }
-    }
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, []);
+  // item count (how many products), not quantity sum
+  const cartCount = hasMounted ? cart.length : 0;
 
   return (
-    <div className="relative" ref={menuRef}>
-      <button
-        type="button"
-        aria-label="Cart"
-        aria-expanded={open}
-        onClick={() => setOpen(!open)}
-        className="relative inline-flex cursor-pointer items-center"
-      >
-        <Cart />
-        {cartCount > 0 ? (
-          <span className="absolute -top-[6px] -right-[8px] flex h-[18px] min-w-[18px] items-center justify-center rounded-full bg-primary px-[4px] text-[10px] font-[600] text-white">
-            {cartCount}
-          </span>
-        ) : null}
-      </button>
-
-      {open ? (
-        <div className="absolute top-[45px] right-0 z-[80] w-[360px] overflow-hidden rounded-[8px] border border-border-light bg-secondary shadow-lg">
-          <MiniCart onClose={() => setOpen(false)} simple />
-        </div>
+    <button
+      type="button"
+      aria-label="Cart"
+      aria-expanded={open}
+      onClick={(e) => {
+        e.stopPropagation();
+        dispatch(toggleCartDropdown());
+      }}
+      className="relative inline-flex cursor-pointer items-center"
+    >
+      <Cart />
+      {cartCount > 0 ? (
+        <span className="absolute -top-[6px] -right-[8px] flex h-[18px] min-w-[18px] items-center justify-center rounded-full bg-primary px-[4px] text-[10px] font-[600] text-white">
+          {cartCount}
+        </span>
       ) : null}
+    </button>
+  );
+}
+
+// ONE panel only — login modal + cart dropdown (fixes View Cart / Clear Cart)
+function CartPanel() {
+  const dispatch = useDispatch();
+  const { open, view, pendingItem } = useSelector((state) => state.cartUi);
+  const panelRef = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    if (!open || view === "login") return;
+
+    function handleClickOutside(e: MouseEvent) {
+      const target = e.target as Node;
+      // ignore clicks on any cart button
+      if ((target as HTMLElement).closest?.('[aria-label="Cart"]')) return;
+      if (panelRef.current && !panelRef.current.contains(target)) {
+        dispatch(closeCartDropdown());
+      }
+    }
+
+    // delay so the same click that opened does not instantly close
+    const timer = setTimeout(() => {
+      document.addEventListener("click", handleClickOutside);
+    }, 0);
+
+    return () => {
+      clearTimeout(timer);
+      document.removeEventListener("click", handleClickOutside);
+    };
+  }, [dispatch, open, view]);
+
+  useEffect(() => {
+    if (view !== "added" || !open) return;
+
+    const timer = setTimeout(() => {
+      dispatch(closeCartDropdown());
+    }, 5000);
+
+    return () => clearTimeout(timer);
+  }, [view, open, dispatch]);
+
+  async function handleLoginSuccess() {
+    if (pendingItem) {
+      const saved = loadLogin();
+
+      if (saved?.user?.id) {
+        try {
+          await apiAddProduct(
+            saved.user.id,
+            pendingItem.id,
+            pendingItem.quantity ?? 1
+          );
+        } catch (error) {
+          console.error("Cart API add failed:", error);
+        }
+      }
+
+      dispatch(
+        addToCart({
+          id: pendingItem.id,
+          title: pendingItem.title,
+          price: pendingItem.price,
+          thumbnail: pendingItem.thumbnail,
+          quantity: pendingItem.quantity ?? 1,
+        })
+      );
+      dispatch(clearPendingItem());
+    }
+    dispatch(showAddedToCart());
+  }
+
+  if (!open) return null;
+
+  // Login = center of screen
+  if (view === "login") {
+    return (
+      <div
+        className="fixed inset-0 z-[9990] flex items-center justify-center bg-black/40 px-[16px]"
+        onClick={() => dispatch(closeCartDropdown())}
+      >
+        <div
+          className="w-full max-w-[400px] overflow-hidden rounded-[12px] border border-border-light bg-secondary shadow-lg"
+          onClick={(e) => e.stopPropagation()}
+        >
+          <CartLoginForm onSuccess={handleLoginSuccess} />
+        </div>
+      </div>
+    );
+  }
+
+  // Cart / Added = near top-right (under header cart)
+  return (
+    <div
+      ref={panelRef}
+      className="fixed top-[88px] right-[16px] z-[9990] w-[min(420px,calc(100vw-32px))] overflow-hidden rounded-[8px] border border-border-light bg-secondary shadow-lg md:right-[32px] 2xl:right-[160px]"
+    >
+      {view === "added" ? (
+        <AddedToCartMessage />
+      ) : (
+        <MiniCart
+          onClose={() => dispatch(closeCartDropdown())}
+          simple
+        />
+      )}
     </div>
   );
 }
 
 function UserMenu() {
   const dispatch = useDispatch();
+  const user = useSelector((state) => state.user.user);
   const [open, setOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
 
@@ -80,8 +223,12 @@ function UserMenu() {
   function handleLogout() {
     clearLogin();
     dispatch(logout());
+    dispatch(clearCart());
+    clearApiCart();
     setOpen(false);
   }
+
+  const displayName = user?.name || user?.username || "User";
 
   return (
     <div className="relative" ref={menuRef}>
@@ -90,9 +237,11 @@ function UserMenu() {
         aria-label="Account"
         aria-expanded={open}
         onClick={() => setOpen(!open)}
-        className="flex cursor-pointer items-center"
+        className="flex max-w-[140px] cursor-pointer items-center"
       >
-        <User />
+        <Paragraph as="span" type="nav" className="truncate !font-[500]">
+          {displayName}
+        </Paragraph>
       </button>
 
       {open ? (
@@ -111,8 +260,8 @@ function UserMenu() {
 }
 
 export default function Header() {
+  const dispatch = useDispatch();
   const [menuOpen, setMenuOpen] = useState(false);
-  const [cartOpen, setCartOpen] = useState(false);
   const [hasMounted, setHasMounted] = useState(false);
   const isAuthenticated = useSelector(
     (state) => state.user.isAuthenticated
@@ -135,7 +284,7 @@ export default function Header() {
   };
 
   return (
-    <header className="relative">
+    <header className="sticky top-0 z-[100] bg-secondary">
       {/* Desktop (lg+) */}
       <div className="hidden h-[88px] items-center justify-center gap-[40px] px-[32px] py-[16px] lg:flex 2xl:gap-[56.53px] 2xl:px-[160px] border-b border-[1px] border-border-light">
         <Link href="/">
@@ -162,6 +311,7 @@ export default function Header() {
         </nav>
 
         <div className="flex items-center gap-4 2xl:gap-[24px]">
+          <CurrencyMenu />
           {header.actionLinks
             .filter((link) => link.icon !== "user" && link.icon !== "cart")
             .map((link) => (
@@ -169,7 +319,7 @@ export default function Header() {
                 {actionIcon(link.icon)}
               </Link>
             ))}
-          <CartMenu />
+          <CartButton />
           {isAuthenticated ? (
             <UserMenu />
           ) : userActionLink ? (
@@ -204,7 +354,8 @@ export default function Header() {
         </nav>
 
         <div className="flex items-center gap-4">
-          <CartMenu />
+          <CurrencyMenu className="w-[110px]" />
+          <CartButton />
           {isAuthenticated ? (
             <UserMenu />
           ) : userActionLink ? (
@@ -220,12 +371,14 @@ export default function Header() {
         <Link href="/">
           <CompanyLogo />
         </Link>
-        <button
-          type="button"
-          aria-label={ui.openMenu}
-          onClick={() => setMenuOpen(!menuOpen)}
-          className="flex flex-col gap-[5px]"
-        >
+        <div className="flex items-center gap-[16px]">
+          <CartButton />
+          <button
+            type="button"
+            aria-label={ui.openMenu}
+            onClick={() => setMenuOpen(!menuOpen)}
+            className="flex flex-col gap-[5px]"
+          >
           <svg
             width="40"
             height="40"
@@ -253,7 +406,8 @@ export default function Header() {
               fill="currentColor"
             />
           </svg>
-        </button>
+          </button>
+        </div>
       </div>
 
       <div
@@ -307,6 +461,12 @@ export default function Header() {
         </nav>
 
         <div className="mt-[8px] flex flex-col px-[20px] pb-[20px]">
+          <div className="border-b border-border-light py-[16px]">
+            <Paragraph as="span" type="nav" className="mb-[8px] block !text-muted-nav">
+              Currency
+            </Paragraph>
+            <CurrencyMenu className="w-full" />
+          </div>
           {header.actionLinks
             .filter((link) => link.icon !== "user")
             .map((link) =>
@@ -317,7 +477,7 @@ export default function Header() {
                   className="border-b border-border-light py-[16px] text-left text-[16px] font-[500]"
                   onClick={() => {
                     setMenuOpen(false);
-                    setCartOpen(true);
+                    dispatch(openCartDropdown("cart"));
                   }}
                 >
                   {link.label}
@@ -345,7 +505,9 @@ export default function Header() {
           ))}
         </div>
       </div>
-      <MiniCartModal open={cartOpen} onClose={() => setCartOpen(false)} />
+
+      {/* single cart panel for whole header */}
+      <CartPanel />
     </header>
   );
 }

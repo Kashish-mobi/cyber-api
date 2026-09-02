@@ -16,6 +16,7 @@ import { useDispatch, useSelector } from "@/redux/hooks";
 import { defaultFilters, getChips, setFilters } from "@/redux/slices/filterSlice";
 import { setFiltered } from "@/redux/slices/productSlice";
 import { getFiltersFromUrl, loadProducts, useFilters } from "@/redux/useFilters";
+import { useCurrency } from "@/hooks/useCurrency";
 
 const SORT_LABELS: Record<string, string> = {
   "rating-desc": "By rating : High to Low",
@@ -105,7 +106,8 @@ export default function ProductsClient({
 }) {
   const [filterMenuOpen, setFilterMenuOpen] = useState(false);
   const dispatch = useDispatch();
-  const { filters, applyFilters, removeChip, filterText } = useFilters();
+  const { filters, applyFilters, removeChip, queryString } = useFilters();
+  const { currencySign } = useCurrency();
   const filtered = useSelector((state) => state.products.filtered);
   const clientProducts = useSelector((state) => state.products.products);
   const clientTotal = useSelector((state) => state.products.totalProducts);
@@ -118,7 +120,7 @@ export default function ProductsClient({
   const query = filters.q;
   const sortBy = filters.sortBy;
   const totalPages = Math.max(1, Math.ceil(total / limit));
-  const chips = getChips(filters);
+  const chips = getChips(filters, currencySign);
 
   const handleClearAll = () => {
     applyFilters(defaultFilters);
@@ -160,7 +162,7 @@ export default function ProductsClient({
     { label: "Catalog", href: "/products" },
     {
       label: category || query || "Products",
-      href: `/products${filterText ? `?filter=${encodeURIComponent(filterText)}` : ""}`,
+      href: queryString ? `/products?${queryString}` : "/products",
     },
   ]}
 />

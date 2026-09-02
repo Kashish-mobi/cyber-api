@@ -22,9 +22,11 @@ export default function AuthFormClient({ mode }: AuthFormClientProps) {
   const [email, setEmail] = useState("");
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
 
   async function handleSubmit(e: FormEvent) {
     e.preventDefault();
+    setError("");
 
     try {
       if (isLogin) {
@@ -52,8 +54,12 @@ export default function AuthFormClient({ mode }: AuthFormClientProps) {
 
         router.push("/login");
       }
-    } catch (error) {
-      console.error("Authentication failed:", error);
+    } catch {
+      if (isLogin) {
+        setError("User not registered. Try username: emilys / password: emilyspass");
+      } else {
+        setError("Signup failed. Please try again.");
+      }
     }
   }
 
@@ -136,6 +142,10 @@ export default function AuthFormClient({ mode }: AuthFormClientProps) {
                   className="h-[48px] rounded-[8px] border border-border-light bg-surface px-[16px] text-[14px] outline-none focus:border-primary"
                 />
               </label>
+
+              {error ? (
+                <Paragraph className="!text-[14px] !text-primary">{error}</Paragraph>
+              ) : null}
 
               <Button
                 type="submit"

@@ -27,9 +27,9 @@ export default function Page() {
         title={discounts.title}
         items={discounts.items}
         buttonText={discounts.buyNowLabel ?? ui.buyNow}
-        currencySymbol={ui.currencySymbol}
       />
       <BannerSection />
     </div>
   );
 }
+

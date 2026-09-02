@@ -469,10 +469,6 @@ export default async function ProductPage({
           buttonText={
             product.ui.buyNow
           }
-
-          currencySymbol={
-            product.currency
-          }
         />
 
       </div>

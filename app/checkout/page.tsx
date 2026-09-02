@@ -28,6 +28,7 @@ import {
 } from "@/redux/slices/checkoutSlice";
 import { clearCart, clearCodes } from "@/redux/slices/cartSlice";
 import { useRouter } from "nextjs-toploader/app";
+import { useCurrency } from "@/hooks/useCurrency";
 
 const paymentTabs = [
   { id: "credit-card", label: "Credit Card" },
@@ -44,22 +45,24 @@ const checkoutSteps = [
 const shippingMethods = [
   {
     id: 1,
-    price: "Free",
+    priceUsd: 0,
     title: "Regularly shipment",
     date: "17 Oct, 2023",
+    description: null as string | null,
   },
   {
     id: 2,
-    price: "$8.50",
+    priceUsd: 8.5,
     title: "Get your delivery as soon as possible",
     date: "1 Oct, 2023",
+    description: null as string | null,
   },
   {
     id: 3,
-    price: null,
+    priceUsd: null as number | null,
     title: "Schedule",
     description: "Pick a date when you want to get your delivery",
-    date: null,
+    date: null as string | null,
   },
 ];
 
@@ -91,6 +94,7 @@ export default function CheckoutPage() {
   const dispatch = useDispatch();
   const router = useRouter();
   const searchParams = useSearchParams();
+  const { currencySign } = useCurrency();
   const cart = useSelector((state) => state.cart.cart);
   const {
     addresses,
@@ -388,8 +392,10 @@ export default function CheckoutPage() {
                           width="24px"
                           height="24px"
                         />
-                        {method.price && (
-                          <Paragraph type="address">{method.price}</Paragraph>
+                        {method.priceUsd !== null && (
+                          <Paragraph type="address">
+                            {method.priceUsd === 0 ? "Free" : currencySign(method.priceUsd)}
+                          </Paragraph>
                         )}
                         {method.title && (
                           <Paragraph type="address">{method.title}</Paragraph>
