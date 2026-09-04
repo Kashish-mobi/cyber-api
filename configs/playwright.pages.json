@@ -1,0 +1,50 @@
+[
+  {
+    "name": "Home Page",
+    "url": "/",
+    "components": [
+      {
+        "name": "Hero section",
+        "selector": "hero-section",
+        "referenceImageDesktop": "main-desk.png",
+        "referenceImageMobile": "main-mob.png"
+      },
+      {
+        "name": "Browse by category",
+        "selector": "category-section",
+        "referenceImageDesktop": "category-desk.png",
+        "referenceImageMobile": "category-mob.png"
+      },
+      {
+        "name": "New arrival products",
+        "selector": "pdp-section",
+        "referenceImageDesktop": "new-arrival-desk.png",
+        "referenceImageMobile": "new-arrival-mob.png"
+      },
+      {
+        "name": "Popular products",
+        "selector": "popular-section",
+        "referenceImageDesktop": "banner-desk.png",
+        "referenceImageMobile": "banner-mob.png"
+      },
+      {
+        "name": "Discounted products",
+        "selector": "discount-section",
+        "referenceImageDesktop": "discount-dek.png",
+        "referenceImageMobile": "discount-mob.png"
+      },
+      {
+        "name": "Summer sale banner",
+        "selector": "banner-section",
+        "referenceImageDesktop": "footer-ban-desk.png",
+        "referenceImageMobile": "footer-ban-mob.png"
+      },
+      {
+        "name": "Footer",
+        "selector": "footer",
+        "referenceImageDesktop": "footer-desk.png",
+        "referenceImageMobile": "footer-mob.png"
+      }
+    ]
+  }
+]

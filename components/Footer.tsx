@@ -9,8 +9,11 @@ const { footer } = homepage;
 
 export default function Footer() {
   return (
-    <footer className="flex items-center justify-center bg-primary text-secondary">
-      <div className="container px-6 md:py-[72px] pb-[46px] pt-[48px] lg:px-0 2xl:pt-[104px] 2xl:pb-[144px]">
+    <footer
+      className="flex items-center justify-center bg-primary text-secondary"
+      data-testid="footer"
+    >
+      <div className="container px-6 md:py-[72px] pb-[46px] pt-[48px] lg:px-0 2xl:pt-[104px] 2xl:pb-[106px]">
         <div className="grid grid-cols-1 lg:gap-12 gap-8 lg:grid-cols-[384px_1fr] xl:gap-[113px]">
           <div className="flex flex-col items-center md:items-start">
             <CompanyLogoLight />

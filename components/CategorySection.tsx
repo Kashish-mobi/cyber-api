@@ -56,7 +56,10 @@ export default function CategorySection() {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center bg-surface-soft">
+    <div
+      className="flex flex-col items-center justify-center bg-surface-soft"
+      data-testid="category-section"
+    >
       <div className="container py-[64px] md:py-[80px]">
         <div className="flex items-center justify-between">
           <Heading as="h2" variant="section">

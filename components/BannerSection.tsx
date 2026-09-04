@@ -15,7 +15,7 @@ export default function BannerSection() {
   const router = useRouter();
 
   return (
-    <div className="relative h-[512px] sm:h-[448px] w-full">
+    <div className="relative h-[512px] sm:h-[448px] w-full" data-testid="banner-section">
       <AppImage
         src={banner.image.src}
         alt={banner.image.alt}

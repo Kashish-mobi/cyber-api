@@ -69,7 +69,7 @@ export default function PopularSection() {
   );
 
   return (
-    <div className="w-full">
+    <div className="w-full" data-testid="popular-section">
       {/* Mobile carousel — height follows content, max 723px */}
       <div className="max-h-[723px] w-full overflow-hidden md:hidden">
         <div

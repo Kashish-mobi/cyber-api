@@ -14,7 +14,7 @@ export default function PDPSection() {
   const [activeTab, setActiveTab] = useState<TabId>("new-arrivals");
 
   return (
-    <div className="w-full flex justify-center">
+    <div className="w-full flex justify-center" data-testid="pdp-section">
       <section className="container py-[56px]">
         <Tabs
           tabs={tabs.map((tab) => ({ id: tab.id, label: tab.name }))}

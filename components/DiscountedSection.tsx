@@ -23,7 +23,7 @@ export default function DiscountedSection({
   buttonText = "View Product",
 }: DiscountedSectionProps) {
   return (
-    <div className="w-full flex items-center justify-center">
+    <div className="w-full flex items-center justify-center" data-testid="discount-section">
       <section className="container pt-[63px] pb-[58px] 2xl:py-[80px]">
         <Heading as="h2" variant="section" className="mb-[32px] tracking-normal">
           {title}

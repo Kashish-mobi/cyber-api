@@ -14,7 +14,7 @@ export default function MainSection() {
   const router = useRouter();
 
   return (
-    <div className="flex items-center justify-center bg-hero overflow-hidden">
+    <div className="flex items-center justify-center bg-hero overflow-hidden" data-testid="hero-section">
       <div className="container flex flex-col items-center justify-center md:flex-row md:gap-[40px] 2xl:gap-[120px]">
         <div className="flex flex-col items-center justify-center pt-[88px] md:items-start md:justify-start md:pt-0">
           <Paragraph type="eyebrow" className="mb-[16px] text-muted lg:mb-[28px]">

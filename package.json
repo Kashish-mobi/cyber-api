@@ -3,13 +3,20 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
+    "dev": "next dev --webpack",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "report-pixelmatch": "audit-kit report:pixelmatch-pdf:all",
+    "report-typography": "audit-kit report:typography-pdf:all",
+    "report-seo": "audit-kit report:seo-pdf:all",
+    "report-responsive": "audit-kit report:responsive-pdf:all",
+    "report-lighthouse": "audit-kit report:lighthouse-pdf:all",
+    "report-ada": "audit-kit report:ada-pdf:all"
   },
   "dependencies": {
     "@reduxjs/toolkit": "^2.12.0",
+    "@sahilmobikasa/storefront-audit-kit": "^1.0.1",
     "next": "16.2.11",
     "nextjs-toploader": "^3.9.17",
     "react": "19.2.4",

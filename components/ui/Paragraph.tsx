@@ -7,7 +7,7 @@ const paragraphStyles = {
   lead: "text-[19px] font-[400] leading-[24px] md:text-[20px] md:leading-[1em] tracking-[0px] md:tracking-[-0.85px]",
   eyebrow: "text-[25px] font-[600] leading-[32px]",
   banner: "text-[16px] font-[400] leading-[32px]",
-  footer: "text-[14px] font-[500] leading-[32px]",
+  footer: "text-[14px] font-[500] leading-[32px] tracking-[-0.1px]",
   footerleft:"md:text-[14px] text-[13px] font-[500] md:leading-[1.71em] leading-[24px] text-center md:text-left",
   nav: "text-[16px] font-[500] leading-[1em] tracking-[0px]",
   price: "text-[24px] font-[600] leading-[24px]",
